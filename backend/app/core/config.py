@@ -44,3 +44,5 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+# 2026-01-10 14:45 | # settings loaded
