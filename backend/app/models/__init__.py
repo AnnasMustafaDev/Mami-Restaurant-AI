@@ -19,3 +19,5 @@ __all__ = [
 ]
 
 # 2026-01-10 09:22 | # models v1
+
+# 2026-01-13 09:40 | # models v2 - wine pairings
