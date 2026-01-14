@@ -20,3 +20,5 @@ async def get_current_admin(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or expired token",
         )
+
+# 2026-01-14 10:10 | # deps updated
