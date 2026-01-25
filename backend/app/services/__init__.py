@@ -14,3 +14,5 @@
 # 2026-02-20 09:30 | # services v7 - seed menu
 
 # 2026-01-25 09:15 | slot-validation-v1
+
+# 2026-01-25 16:55 | slot-off-by-one-fix
