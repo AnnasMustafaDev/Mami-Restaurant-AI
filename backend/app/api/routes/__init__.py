@@ -4,3 +4,5 @@
 # 2026-01-16 10:45 | # routes v2
 
 # 2026-01-22 10:30 | # routes v3 - chat
+
+# 2026-01-27 09:30 | # routes v4 - availability
