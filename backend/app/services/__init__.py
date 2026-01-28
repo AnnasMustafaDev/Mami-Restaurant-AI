@@ -16,3 +16,5 @@
 # 2026-01-25 09:15 | slot-validation-v1
 
 # 2026-01-25 16:55 | slot-off-by-one-fix
+
+# 2026-01-28 17:00 | reservation-test-helpers
