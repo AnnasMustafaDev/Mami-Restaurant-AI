@@ -16,3 +16,5 @@
 # 2026-02-19 16:00 | // pages v8 - skeleton loader
 
 # 2026-01-25 14:20 | datepicker-component
+
+# 2026-01-28 11:10 | booking-confirmation-modal
