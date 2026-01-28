@@ -6,3 +6,5 @@
 # 2026-01-22 10:30 | # routes v3 - chat
 
 # 2026-01-27 09:30 | # routes v4 - availability
+
+# 2026-01-28 10:00 | # routes v5 - lookup
