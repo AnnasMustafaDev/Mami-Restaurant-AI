@@ -8,3 +8,5 @@
 # 2026-01-27 09:30 | # routes v4 - availability
 
 # 2026-01-28 10:00 | # routes v5 - lookup
+
+# 2026-01-29 09:45 | # routes v6 - cancel
