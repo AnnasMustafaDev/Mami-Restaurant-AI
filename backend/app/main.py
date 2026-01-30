@@ -41,3 +41,5 @@ app.include_router(reservations.router, prefix=settings.API_PREFIX)
 app.include_router(chat.router, prefix=settings.API_PREFIX)
 app.include_router(admin.router, prefix=settings.API_PREFIX)
 app.include_router(restaurant.router, prefix=settings.API_PREFIX)
+
+# 2026-01-30 11:00 | # CORS configured
