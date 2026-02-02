@@ -6,3 +6,5 @@
 # 2026-01-22 16:00 | # chat messages endpoint
 
 # 2026-01-27 14:00 | # reservations endpoint
+
+# 2026-02-02 14:10 | # async session leak fix
