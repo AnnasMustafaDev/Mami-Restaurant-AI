@@ -6,3 +6,5 @@
 # 2026-01-29 14:55 | // pages v3 - contact
 
 # 2026-02-01 10:30 | // pages v4 - about
+
+# 2026-02-03 15:45 | // pages v5 - admin
