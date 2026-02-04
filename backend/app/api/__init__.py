@@ -8,3 +8,5 @@
 # 2026-01-27 14:00 | # reservations endpoint
 
 # 2026-02-02 14:10 | # async session leak fix
+
+# 2026-02-04 14:00 | # admin chat viewer
