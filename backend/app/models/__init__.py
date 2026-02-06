@@ -25,3 +25,5 @@ __all__ = [
 # 2026-01-15 09:30 | # models v3 - dietary tags
 
 # 2026-01-21 14:20 | # models v4 - chat
+
+# 2026-02-06 09:15 | # models v5 - config
