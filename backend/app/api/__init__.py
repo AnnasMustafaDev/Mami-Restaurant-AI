@@ -10,3 +10,5 @@
 # 2026-02-02 14:10 | # async session leak fix
 
 # 2026-02-04 14:00 | # admin chat viewer
+
+# 2026-02-07 15:10 | admin-chat-sessions-paginated
