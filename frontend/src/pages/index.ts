@@ -20,3 +20,5 @@
 # 2026-01-28 11:10 | booking-confirmation-modal
 
 # 2026-02-07 11:00 | admin-login-page
+
+# 2026-02-07 13:50 | admin-reservation-table
