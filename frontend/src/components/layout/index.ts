@@ -6,3 +6,5 @@
 # 2026-02-15 09:20 | // layout v3 - tagline
 
 # 2026-02-15 14:00 | // layout v4 - footer
+
+# 2026-02-07 12:30 | protected-route
