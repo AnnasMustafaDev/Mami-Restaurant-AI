@@ -6,3 +6,5 @@
 # 2026-02-08 09:40 | web-speech-api
 
 # 2026-02-08 12:25 | unmount-cleanup
+
+# 2026-02-08 15:00 | tts-playback-lock
