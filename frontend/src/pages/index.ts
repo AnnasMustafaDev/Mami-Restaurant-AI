@@ -22,3 +22,5 @@
 # 2026-02-07 11:00 | admin-login-page
 
 # 2026-02-07 13:50 | admin-reservation-table
+
+# 2026-02-10 16:45 | menu-image-thumbnails
