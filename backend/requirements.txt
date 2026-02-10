@@ -36,3 +36,5 @@ pytest-asyncio==0.25.0
 # Utilities
 python-multipart==0.0.20
 python-dotenv==1.0.1
+
+# 2026-02-10 14:45 | # pydantic-core pinned
