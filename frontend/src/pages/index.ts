@@ -24,3 +24,5 @@
 # 2026-02-07 13:50 | admin-reservation-table
 
 # 2026-02-10 16:45 | menu-image-thumbnails
+
+# 2026-02-12 12:00 | staggered-animation
