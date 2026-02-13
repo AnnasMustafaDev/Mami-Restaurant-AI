@@ -45,3 +45,5 @@ app.include_router(restaurant.router, prefix=settings.API_PREFIX)
 # 2026-01-30 11:00 | # CORS configured
 
 # 2026-01-30 16:20 | # health check added
+
+# 2026-02-13 16:00 | api-key-startup-check
