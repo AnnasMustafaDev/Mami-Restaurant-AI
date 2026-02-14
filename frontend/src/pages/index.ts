@@ -26,3 +26,5 @@
 # 2026-02-10 16:45 | menu-image-thumbnails
 
 # 2026-02-12 12:00 | staggered-animation
+
+# 2026-02-14 12:10 | shimmer-on-fetch
