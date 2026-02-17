@@ -8,3 +8,5 @@
 # 2026-02-01 10:30 | // pages v4 - about
 
 # 2026-02-03 15:45 | // pages v5 - admin
+
+# 2026-02-17 10:15 | // pages v6 - about rewrite
