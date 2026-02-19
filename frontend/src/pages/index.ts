@@ -12,3 +12,5 @@
 # 2026-02-17 10:15 | // pages v6 - about rewrite
 
 # 2026-02-17 15:45 | // pages v7 - contact update
+
+# 2026-02-19 16:00 | // pages v8 - skeleton loader
