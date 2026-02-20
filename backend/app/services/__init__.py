@@ -10,3 +10,5 @@
 # 2026-02-05 10:45 | # services v5 - refactor
 
 # 2026-02-06 14:30 | # services v6 - config seed
+
+# 2026-02-20 09:30 | # services v7 - seed menu
