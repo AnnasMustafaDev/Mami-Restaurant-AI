@@ -33,7 +33,7 @@ TOOLS = [
                 "properties": {
                     "category": {
                         "type": "string",
-                        "enum": ["starter", "main", "dessert", "wine"],
+                        "enum": ["nebenbei", "kalt", "warm", "suess", "wine"],
                         "description": "Filter by menu category",
                     },
                     "dietary_pref": {
@@ -170,7 +170,7 @@ async def _exec_get_menu(db: AsyncSession, args: dict) -> str:
             except json.JSONDecodeError:
                 pass
         special = " [TODAY'S SPECIAL]" if item.is_special else ""
-        lines.append(f"- {item.name}: ${item.price:.2f}{tags}{special}\n  {item.description or ''}")
+        lines.append(f"- {item.name}: €{item.price:.2f}{tags}{special}\n  {item.description or ''}")
     return "\n".join(lines)
 
 
@@ -182,7 +182,7 @@ async def _exec_get_daily_specials(db: AsyncSession, args: dict) -> str:
         return "No specials today."
     lines = []
     for item in items:
-        lines.append(f"- {item.name}: ${item.price:.2f}\n  {item.description or ''}")
+        lines.append(f"- {item.name}: €{item.price:.2f}\n  {item.description or ''}")
     return "\n".join(lines)
 
 
@@ -216,7 +216,7 @@ async def _exec_recommend_wine(db: AsyncSession, args: dict) -> str:
 
     lines = [f"Wine pairings for {dish.name}:"]
     for pairing, wine in pairings:
-        lines.append(f"- {wine.name} (${wine.price:.2f}): {pairing.notes or ''}")
+        lines.append(f"- {wine.name} (€{wine.price:.2f}): {pairing.notes or ''}")
     return "\n".join(lines)
 
 

@@ -14,13 +14,14 @@ interface MenuItem {
   is_special: boolean;
 }
 
-const categories = ['all', 'starter', 'main', 'dessert', 'wine'];
+const categories = ['all', 'nebenbei', 'kalt', 'warm', 'suess', 'wine'];
 const categoryLabels: Record<string, string> = {
-  all: 'All',
-  starter: 'Starters',
-  main: 'Mains',
-  dessert: 'Desserts',
-  wine: 'Wines',
+  all: 'Alle',
+  nebenbei: 'Nebenbei',
+  kalt: 'Kalt',
+  warm: 'Warm',
+  suess: 'Süß',
+  wine: 'Weine',
 };
 
 export default function MenuPage() {
@@ -52,7 +53,7 @@ export default function MenuPage() {
           <p className="text-gold tracking-[0.2em] uppercase text-sm font-medium mb-3">Curated For You</p>
           <h1 className="text-4xl sm:text-5xl font-bold mb-3">Our Menu</h1>
           <p className="text-white/70 max-w-xl mx-auto" style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.2rem' }}>
-            Authentic Italian-Mediterranean cuisine, crafted with seasonal ingredients and love
+            Saisonale Küche mit Leidenschaft und den besten Zutaten
           </p>
         </motion.div>
       </section>
@@ -119,7 +120,7 @@ export default function MenuPage() {
                         </span>
                       )}
                     </h3>
-                    <span className="text-wine font-bold text-lg">${item.price.toFixed(2)}</span>
+                    <span className="text-wine font-bold text-lg">€{item.price.toFixed(2)}</span>
                   </div>
                   {item.description && (
                     <p className="text-sm text-warm-gray mb-3 leading-relaxed">{item.description}</p>

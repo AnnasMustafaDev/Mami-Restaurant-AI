@@ -250,12 +250,12 @@ class TestLLMToolCalling:
         tool_call = MagicMock()
         tool_call.id = "call_123"
         tool_call.function.name = "get_menu"
-        tool_call.function.arguments = '{"category": "starter"}'
+        tool_call.function.arguments = '{"category": "nebenbei"}'
 
         first_response = _make_mock_chat_response(None, tool_calls=[tool_call])
         # Second call: LLM gives final answer after seeing tool results
         final_response = _make_mock_chat_response(
-            "We have lovely starters! Try the Bruschetta al Pomodoro or the Burrata e Prosciutto."
+            "We have lovely sides! Try the Brot or the Käseauswahl des Tages."
         )
 
         with pytest.MonkeyPatch.context() as mp:
@@ -276,11 +276,11 @@ class TestLLMToolCalling:
             sid = await self._create_session(client)
             resp = await client.post(
                 f"/api/chat/sessions/{sid}/messages",
-                json={"content": "What starters do you have?"},
+                json={"content": "What sides do you have?"},
             )
             assert resp.status_code == 200
             data = resp.json()
-            assert "Bruschetta" in data["content"]
+            assert "Brot" in data["content"]
             assert call_count == 2  # Two rounds: tool call + final
 
     async def test_tool_call_get_daily_specials(self, client):
@@ -295,7 +295,7 @@ class TestLLMToolCalling:
 
         first_response = _make_mock_chat_response(None, tool_calls=[tool_call])
         final_response = _make_mock_chat_response(
-            "Today's special is the Ossobuco alla Milanese!"
+            "Today's special is MaMi's Bolo!"
         )
 
         with pytest.MonkeyPatch.context() as mp:
@@ -317,7 +317,7 @@ class TestLLMToolCalling:
                 json={"content": "Any specials today?"},
             )
             assert resp.status_code == 200
-            assert "Ossobuco" in resp.json()["content"]
+            assert "Bolo" in resp.json()["content"]
 
     async def test_tool_call_check_availability(self, client):
         """Simulate LLM checking table availability."""
@@ -399,11 +399,11 @@ class TestLLMToolCalling:
         tool_call = MagicMock()
         tool_call.id = "call_wine"
         tool_call.function.name = "recommend_wine"
-        tool_call.function.arguments = '{"dish_name": "Ossobuco"}'
+        tool_call.function.arguments = '{"dish_name": "Bolo"}'
 
         first_response = _make_mock_chat_response(None, tool_calls=[tool_call])
         final_response = _make_mock_chat_response(
-            "For the Ossobuco, I'd recommend the Barolo DOCG 2018. Perfetto!"
+            "For MaMi's Bolo, I'd recommend the Chianti Classico Riserva 2019. Perfetto!"
         )
 
         with pytest.MonkeyPatch.context() as mp:
@@ -422,10 +422,10 @@ class TestLLMToolCalling:
             sid = await self._create_session(client)
             resp = await client.post(
                 f"/api/chat/sessions/{sid}/messages",
-                json={"content": "What wine goes with Ossobuco?"},
+                json={"content": "What wine goes with the Bolo?"},
             )
             assert resp.status_code == 200
-            assert "Barolo" in resp.json()["content"]
+            assert "Chianti" in resp.json()["content"]
 
     async def test_tool_call_restaurant_info(self, client):
         """Simulate LLM fetching restaurant hours."""
