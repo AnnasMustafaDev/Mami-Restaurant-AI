@@ -9,10 +9,10 @@ const values = [
 ];
 
 const milestones = [
-  { year: '2015', title: 'The Beginning', desc: 'Mamma Maria opens a small kitchen in Little Italy, serving family recipes.' },
-  { year: '2017', title: 'Chef Marco Joins', desc: 'Acclaimed chef Marco Rossi brings his Naples-trained expertise to our kitchen.' },
-  { year: '2020', title: 'Wine Program', desc: 'We launch our curated natural wine program, celebrating Italian terroir.' },
-  { year: '2024', title: 'Meet Sofia', desc: 'Our AI host Sofia joins the team, offering personalized dining experiences.' },
+  { year: '2018', title: 'Die Idee', desc: 'Marcel und Miriam träumen von einem Ort, wo gutes Essen und guter Wein die Menschen zusammenbringen.' },
+  { year: '2019', title: 'Die Eröffnung', desc: 'MaMi\'s Food & Wine öffnet seine Türen in der Oderberger Straße 13, Prenzlauer Berg, Berlin.' },
+  { year: '2021', title: 'Das Weinprogramm', desc: 'Wir starten unser kuratiertes Naturweinprogramm mit handverlesenen Weinen aus Deutschland und Europa.' },
+  { year: '2024', title: 'Sofia tritt dem Team bei', desc: 'Unsere KI-Gastgeberin Sofia begleitet euch durch Menü und Reservierungen — auf Deutsch und Englisch.' },
 ];
 
 export default function About() {
@@ -34,7 +34,7 @@ export default function About() {
           transition={{ duration: 0.7 }}
           className="relative z-10 max-w-4xl mx-auto px-4 text-center text-white"
         >
-          <p className="text-gold tracking-[0.2em] uppercase text-sm font-medium mb-3">Since 2015</p>
+          <p className="text-gold tracking-[0.2em] uppercase text-sm font-medium mb-3">Seit 2019 — Berlin Prenzlauer Berg</p>
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">Our Story</h1>
           <p className="text-white/70 max-w-2xl mx-auto" style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.2rem' }}>
             A family-run bistro where warm hospitality meets exceptional cuisine
@@ -52,24 +52,24 @@ export default function About() {
               viewport={{ once: true, margin: '-100px' }}
               transition={{ duration: 0.7 }}
             >
-              <p className="text-gold tracking-[0.2em] uppercase text-sm font-medium mb-3">The Heart of MaMi's</p>
+              <p className="text-gold tracking-[0.2em] uppercase text-sm font-medium mb-3">Das Herz von MaMi's</p>
               <h2 className="text-3xl sm:text-4xl font-bold text-wine-dark mb-6">
-                From Mamma Maria's Kitchen to Yours
+                Willkommen bei Marcel &amp; Miriam
               </h2>
               <p className="text-warm-gray text-lg leading-relaxed mb-6" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-                MaMi's Food & Wine is a family-run Italian-Mediterranean bistro where warm hospitality
-                meets exceptional cuisine. Founded by Mamma Maria, every dish tells a story of tradition,
-                passion, and the finest seasonal ingredients.
+                MaMi's Food & Wine ist ein Restaurant in Berlin Prenzlauer Berg, das warme Gastlichkeit
+                mit außergewöhnlicher Küche verbindet. Gegründet von Marcel und Miriam, erzählt jedes
+                Gericht eine Geschichte von Tradition, Leidenschaft und den feinsten saisonalen Zutaten.
               </p>
               <p className="text-warm-gray leading-relaxed mb-6">
-                Nestled in the heart of Little Italy, we've been serving our community since 2015.
-                Our kitchen blends time-honored recipes with modern Mediterranean flair, creating
-                dishes that honor our roots while embracing the seasons.
+                Mitten im Prenzlauer Berg, an der Oderberger Straße 13, heißen wir euch seit 2019 willkommen.
+                Unsere Küche verbindet saisonale Rezepte mit mediterranem Flair — ehrlich, kreativ und
+                immer mit Herz zubereitet.
               </p>
               <p className="text-warm-gray leading-relaxed">
-                Our wine program celebrates Italy's diverse terroir — from the rolling hills of Tuscany
-                to the sun-drenched vineyards of Sicily. Every bottle is hand-selected to pair perfectly
-                with our menu.
+                Unser Weinprogramm feiert Europas vielfältige Weinlandschaften — von deutschen Rieslingen
+                bis zu toskanischen Klassikern. Jede Flasche ist handverlesen und perfekt auf unsere
+                Gerichte abgestimmt.
               </p>
             </motion.div>
 
@@ -193,17 +193,16 @@ export default function About() {
               transition={{ duration: 0.7, delay: 0.2 }}
               className="order-1 lg:order-2"
             >
-              <p className="text-gold tracking-[0.2em] uppercase text-sm font-medium mb-3">Meet Our Chef</p>
-              <h2 className="text-3xl sm:text-4xl font-bold mb-6">Chef Marco Rossi</h2>
+              <p className="text-gold tracking-[0.2em] uppercase text-sm font-medium mb-3">Unsere Gastgeber</p>
+              <h2 className="text-3xl sm:text-4xl font-bold mb-6">Marcel &amp; Miriam</h2>
               <p className="text-white/80 leading-relaxed mb-4" style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.15rem' }}>
-                Born in Naples and trained in Bologna, Chef Marco brings decades of experience
-                and an unwavering commitment to quality.
+                MaMi's steht für Marcel und Miriam — zwei Menschen mit einer tiefen Leidenschaft
+                für gutes Essen, natürliche Weine und echte Gastfreundschaft.
               </p>
               <p className="text-white/60 leading-relaxed">
-                His philosophy is simple: let the ingredients speak, respect the tradition,
-                and always cook with love. Under his guidance, MaMi's kitchen has become
-                a destination for those seeking authentic Italian flavors with a modern
-                Mediterranean touch.
+                Ihre Philosophie ist einfach: qualitativ hochwertige, saisonale Zutaten, mit Liebe
+                zubereitet und in entspannter Atmosphäre serviert. Jeder Abend bei MaMi's soll sich
+                anfühlen wie ein Abend bei Freunden.
               </p>
             </motion.div>
           </div>

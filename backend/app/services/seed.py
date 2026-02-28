@@ -41,199 +41,240 @@ async def seed_database(db: AsyncSession):
     ]
     db.add_all(tables)
 
-    # --- Menu Items ---
-    starters = [
+    # --- Menu Items (from MaMi's Berlin) ---
+
+    # NEBENBEI (Sides / Small Plates)
+    nebenbei = [
         MenuItem(
-            name="Bruschetta al Pomodoro",
-            description="Toasted sourdough with fresh tomatoes, basil, garlic, and extra virgin olive oil",
-            category="starter",
-            price=12.00,
-            dietary_tags=json.dumps(["vegan"]),
+            name="Brot",
+            description="Frisches Brot mit Butter und Olivenöl",
+            category="nebenbei",
+            price=6.50,
+            dietary_tags=json.dumps(["vegetarian"]),
             is_available=1,
         ),
         MenuItem(
-            name="Burrata e Prosciutto",
-            description="Creamy burrata with San Daniele prosciutto, arugula, and aged balsamic",
-            category="starter",
-            price=18.00,
+            name="Käseauswahl des Tages",
+            description="Tagesaktuelle Auswahl feiner Käsesorten",
+            category="nebenbei",
+            price=23.00,
+            dietary_tags=json.dumps(["vegetarian", "gluten-free"]),
+            is_available=1,
+        ),
+        MenuItem(
+            name="Kopfsalatherz",
+            description="Knackiges Kopfsalatherz mit feinem Dressing",
+            category="nebenbei",
+            price=16.00,
+            dietary_tags=json.dumps(["vegetarian", "gluten-free"]),
+            is_available=1,
+        ),
+        MenuItem(
+            name="Luftgetrockneter Iberico Schinken",
+            description="Luftgetrockneter Iberico Schinken, hauchdünn geschnitten",
+            category="nebenbei",
+            price=23.50,
             dietary_tags=json.dumps(["gluten-free"]),
-            is_available=1,
-        ),
-        MenuItem(
-            name="Carpaccio di Manzo",
-            description="Thinly sliced raw beef with capers, Parmigiano, truffle oil, and lemon",
-            category="starter",
-            price=19.00,
-            dietary_tags=json.dumps(["gluten-free"]),
-            is_available=1,
-        ),
-        MenuItem(
-            name="Arancini",
-            description="Crispy saffron risotto balls stuffed with mozzarella and ragù",
-            category="starter",
-            price=14.00,
-            dietary_tags=json.dumps([]),
             is_available=1,
         ),
     ]
 
-    mains = [
+    # KALT (Cold Dishes)
+    kalt = [
         MenuItem(
-            name="Ossobuco alla Milanese",
-            description="Braised veal shank with saffron risotto and gremolata",
-            category="main",
-            price=36.00,
-            dietary_tags=json.dumps(["gluten-free"]),
-            is_available=1,
-            is_special=1,
-        ),
-        MenuItem(
-            name="Branzino al Forno",
-            description="Oven-roasted whole sea bass with roasted potatoes, olives, and capers",
-            category="main",
+            name="Gelbflossenmakrele",
+            description="Frische Gelbflossenmakrele, fein angerichtet",
+            category="kalt",
             price=32.00,
             dietary_tags=json.dumps(["gluten-free"]),
             is_available=1,
         ),
         MenuItem(
-            name="Tagliatelle al Ragù",
-            description="Fresh egg pasta with slow-cooked Bolognese ragù and Parmigiano",
-            category="main",
+            name="Kürbis",
+            description="Saisonaler Kürbis, kalt zubereitet",
+            category="kalt",
+            price=21.00,
+            dietary_tags=json.dumps(["vegan", "gluten-free"]),
+            is_available=1,
+        ),
+        MenuItem(
+            name="Faux-Gras",
+            description="Pflanzliche Alternative zu Foie Gras",
+            category="kalt",
+            price=31.00,
+            dietary_tags=json.dumps(["vegan"]),
+            is_available=1,
+        ),
+    ]
+
+    # WARM (Warm Dishes)
+    warm = [
+        MenuItem(
+            name="Zwiebelsuppe Hot Pot",
+            description="Heiße Zwiebelsuppe im Hot Pot serviert",
+            category="warm",
+            price=15.00,
+            dietary_tags=json.dumps(["vegetarian"]),
+            is_available=1,
+        ),
+        MenuItem(
+            name="Pimientos de Padron",
+            description="Gebratene Pimientos de Padron mit Meersalz",
+            category="warm",
+            price=18.50,
+            dietary_tags=json.dumps(["vegan", "gluten-free"]),
+            is_available=1,
+        ),
+        MenuItem(
+            name="Rote Garnele",
+            description="Rote Garnele, perfekt gebraten",
+            category="warm",
             price=24.00,
+            dietary_tags=json.dumps(["gluten-free"]),
+            is_available=1,
+        ),
+        MenuItem(
+            name="MaMi's Bolo",
+            description="MaMi's hausgemachte Bolognese — unser Signature Gericht",
+            category="warm",
+            price=29.50,
             dietary_tags=json.dumps([]),
             is_available=1,
+            is_special=1,
         ),
         MenuItem(
-            name="Risotto ai Funghi Porcini",
-            description="Creamy Carnaroli rice with wild porcini mushrooms and truffle oil",
-            category="main",
-            price=26.00,
-            dietary_tags=json.dumps(["vegetarian", "gluten-free"]),
+            name="Kartoffelpfannkuchen",
+            description="Knusprige Kartoffelpfannkuchen, goldbraun gebraten",
+            category="warm",
+            price=24.00,
+            dietary_tags=json.dumps(["vegetarian"]),
             is_available=1,
         ),
         MenuItem(
-            name="Melanzane alla Parmigiana",
-            description="Layered eggplant with tomato sauce, mozzarella, and basil",
-            category="main",
-            price=22.00,
+            name="Spätzle",
+            description="Handgemachte schwäbische Spätzle",
+            category="warm",
+            price=9.50,
             dietary_tags=json.dumps(["vegetarian"]),
             is_available=1,
         ),
     ]
 
-    desserts = [
+    # SÜSS (Desserts)
+    suess = [
         MenuItem(
-            name="Tiramisù della Casa",
-            description="Our signature tiramisu with mascarpone, espresso, and cocoa",
-            category="dessert",
-            price=14.00,
+            name="Cheesecakecreme",
+            description="Cremiger Cheesecake als Dessert",
+            category="suess",
+            price=13.00,
             dietary_tags=json.dumps(["vegetarian"]),
             is_available=1,
         ),
         MenuItem(
-            name="Panna Cotta",
-            description="Vanilla bean panna cotta with seasonal berry compote",
-            category="dessert",
-            price=12.00,
-            dietary_tags=json.dumps(["vegetarian", "gluten-free"]),
+            name="Weisse Schokolade",
+            description="Weisse Schokolade Dessert, kunstvoll angerichtet",
+            category="suess",
+            price=14.50,
+            dietary_tags=json.dumps(["vegetarian"]),
             is_available=1,
         ),
         MenuItem(
-            name="Affogato al Caffè",
-            description="Vanilla gelato drowned in a shot of hot espresso",
-            category="dessert",
-            price=10.00,
-            dietary_tags=json.dumps(["vegetarian", "gluten-free"]),
+            name="Weisses Schokosüppchen",
+            description="Warmes Süppchen aus weisser Schokolade",
+            category="suess",
+            price=9.00,
+            dietary_tags=json.dumps(["vegetarian"]),
             is_available=1,
         ),
     ]
 
+    # WINES (representative selection)
     wines = [
         MenuItem(
-            name="Chianti Classico Riserva 2019",
-            description="Tuscany — Cherry, leather, and dried herbs. Medium-full body with elegant tannins.",
-            category="wine",
-            price=58.00,
-            dietary_tags=json.dumps(["vegan"]),
-            is_available=1,
-        ),
-        MenuItem(
-            name="Barolo DOCG 2018",
-            description="Piedmont — Rose, tar, and dark cherry. Full-bodied with firm tannins. Pairs beautifully with red meats.",
-            category="wine",
-            price=85.00,
-            dietary_tags=json.dumps(["vegan"]),
-            is_available=1,
-        ),
-        MenuItem(
-            name="Vermentino di Sardegna 2022",
-            description="Sardinia — Citrus, white peach, and Mediterranean herbs. Crisp and refreshing.",
+            name="Riesling Kabinett, Mosel 2022",
+            description="Mosel — Frische Zitrus- und Pfirsichnoten, mineralisch mit feiner Restsüße",
             category="wine",
             price=42.00,
             dietary_tags=json.dumps(["vegan"]),
             is_available=1,
         ),
         MenuItem(
-            name="Prosecco Superiore DOCG",
-            description="Veneto — Green apple, white flowers, and fine bubbles. Perfect aperitivo.",
+            name="Grauburgunder Trocken, Pfalz 2022",
+            description="Pfalz — Birne, Mandel und dezente Würze. Elegant und trocken.",
             category="wine",
             price=38.00,
             dietary_tags=json.dumps(["vegan"]),
             is_available=1,
         ),
         MenuItem(
-            name="Amarone della Valpolicella 2017",
-            description="Veneto — Dried fruit, chocolate, and spice. Rich and velvety full body.",
+            name="Spätburgunder Reserve, Baden 2020",
+            description="Baden — Kirsche, Waldbeeren und feine Eichenholznote. Samtiger Körper.",
             category="wine",
-            price=95.00,
+            price=55.00,
+            dietary_tags=json.dumps(["vegan"]),
+            is_available=1,
+        ),
+        MenuItem(
+            name="Chianti Classico Riserva 2019",
+            description="Toskana — Kirsche, Leder und getrocknete Kräuter. Mittelvoll mit eleganten Tanninen.",
+            category="wine",
+            price=58.00,
+            dietary_tags=json.dumps(["vegan"]),
+            is_available=1,
+        ),
+        MenuItem(
+            name="Prosecco Superiore DOCG",
+            description="Veneto — Grüner Apfel, weiße Blüten und feine Perlage. Perfekter Aperitivo.",
+            category="wine",
+            price=36.00,
             dietary_tags=json.dumps(["vegan"]),
             is_available=1,
         ),
     ]
 
-    all_items = starters + mains + desserts + wines
+    all_items = nebenbei + kalt + warm + suess + wines
     db.add_all(all_items)
     await db.flush()  # Get IDs assigned
 
     # --- Wine Pairings ---
-    # Map names to items for easy reference
     item_map = {item.name: item for item in all_items}
 
     pairings = [
-        # Ossobuco pairs with Barolo and Amarone
+        # MaMi's Bolo with Chianti
         WinePairing(
-            dish_id=item_map["Ossobuco alla Milanese"].id,
-            wine_id=item_map["Barolo DOCG 2018"].id,
-            notes="Classic Piedmontese pairing — the Barolo's tannins complement the rich veal",
-        ),
-        WinePairing(
-            dish_id=item_map["Ossobuco alla Milanese"].id,
-            wine_id=item_map["Amarone della Valpolicella 2017"].id,
-            notes="A bold match — dried fruit richness mirrors the braised meat",
-        ),
-        # Branzino with Vermentino
-        WinePairing(
-            dish_id=item_map["Branzino al Forno"].id,
-            wine_id=item_map["Vermentino di Sardegna 2022"].id,
-            notes="Mediterranean white with Mediterranean fish — a natural harmony",
-        ),
-        # Tagliatelle with Chianti
-        WinePairing(
-            dish_id=item_map["Tagliatelle al Ragù"].id,
+            dish_id=item_map["MaMi's Bolo"].id,
             wine_id=item_map["Chianti Classico Riserva 2019"].id,
-            notes="Tuscan ragù meets Tuscan wine — the tomato acidity matches perfectly",
+            notes="Toskanischer Wein trifft auf Bolognese — die Säure harmoniert perfekt",
         ),
-        # Risotto with Vermentino
+        # MaMi's Bolo with Spätburgunder
         WinePairing(
-            dish_id=item_map["Risotto ai Funghi Porcini"].id,
-            wine_id=item_map["Vermentino di Sardegna 2022"].id,
-            notes="Light citrus freshness cuts through the earthy mushroom richness",
+            dish_id=item_map["MaMi's Bolo"].id,
+            wine_id=item_map["Spätburgunder Reserve, Baden 2020"].id,
+            notes="Weiche Kirschnoten ergänzen die reiche Fleischsauce",
         ),
-        # Bruschetta with Prosecco
+        # Gelbflossenmakrele with Riesling
         WinePairing(
-            dish_id=item_map["Bruschetta al Pomodoro"].id,
-            wine_id=item_map["Prosecco Superiore DOCG"].id,
-            notes="Bubbly aperitivo with a classic starter — light and festive",
+            dish_id=item_map["Gelbflossenmakrele"].id,
+            wine_id=item_map["Riesling Kabinett, Mosel 2022"].id,
+            notes="Frischer Riesling mit Zitrusnoten passt wunderbar zum rohen Fisch",
+        ),
+        # Rote Garnele with Grauburgunder
+        WinePairing(
+            dish_id=item_map["Rote Garnele"].id,
+            wine_id=item_map["Grauburgunder Trocken, Pfalz 2022"].id,
+            notes="Eleganter Grauburgunder begleitet die zarte Garnele harmonisch",
+        ),
+        # Käseauswahl with Spätburgunder
+        WinePairing(
+            dish_id=item_map["Käseauswahl des Tages"].id,
+            wine_id=item_map["Spätburgunder Reserve, Baden 2020"].id,
+            notes="Weicher Spätburgunder verbindet sich perfekt mit feinem Käse",
+        ),
+        # Faux-Gras with Riesling
+        WinePairing(
+            dish_id=item_map["Faux-Gras"].id,
+            wine_id=item_map["Riesling Kabinett, Mosel 2022"].id,
+            notes="Die feine Süße des Rieslings ergänzt die cremige Textur",
         ),
     ]
     db.add_all(pairings)
@@ -244,39 +285,39 @@ async def seed_database(db: AsyncSession):
             key="hours",
             value=json.dumps({
                 "monday": "closed",
-                "tuesday": "17:00-22:00",
-                "wednesday": "17:00-22:00",
-                "thursday": "17:00-22:00",
-                "friday": "17:00-23:00",
-                "saturday": "12:00-23:00",
-                "sunday": "12:00-21:00",
+                "tuesday": "18:00-00:00",
+                "wednesday": "18:00-00:00",
+                "thursday": "18:00-00:00",
+                "friday": "18:00-01:00",
+                "saturday": "18:00-01:00",
+                "sunday": "closed",
             }),
         ),
         RestaurantConfig(
             key="location",
             value=json.dumps({
-                "address": "123 Wine Street, Little Italy",
-                "city": "New York",
-                "state": "NY",
-                "zip": "10013",
-                "phone": "+1 (212) 555-MAMI",
-                "email": "hello@mamisfoodandwine.com",
+                "address": "Oderberger Straße 13",
+                "city": "Berlin",
+                "state": "Berlin",
+                "zip": "10435",
+                "phone": "+49 30 239 165 67",
+                "email": "hello@mamis-berlin.de",
             }),
         ),
         RestaurantConfig(
             key="about",
             value=json.dumps({
                 "tagline": "Where every meal is a conversation",
-                "story": "MaMi's Food & Wine is a family-run Italian-Mediterranean bistro where warm hospitality meets exceptional cuisine. Founded by Mamma Maria, every dish tells a story of tradition, passion, and the finest seasonal ingredients.",
-                "chef": "Chef Marco Rossi",
+                "story": "MaMi's Food & Wine is a Berlin restaurant where warm hospitality meets exceptional cuisine. Every dish tells a story of tradition, passion, and the finest seasonal ingredients.",
+                "chef": "MaMi's Kitchen Team",
             }),
         ),
         RestaurantConfig(
             key="booking_settings",
             value=json.dumps({
                 "slot_duration_minutes": 30,
-                "first_slot": "17:00",
-                "last_slot": "21:00",
+                "first_slot": "18:00",
+                "last_slot": "22:00",
                 "max_party_size": 10,
             }),
         ),

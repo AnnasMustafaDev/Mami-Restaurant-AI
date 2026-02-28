@@ -59,27 +59,27 @@ export default function Contact() {
                 {
                   icon: MapPin,
                   title: 'Address',
-                  lines: ['123 Wine Street, Little Italy', 'New York, NY 10013'],
+                  lines: ['Oderberger Straße 13', '10435 Berlin'],
                 },
                 {
                   icon: Phone,
                   title: 'Phone',
-                  lines: ['+1 (212) 555-MAMI'],
+                  lines: ['+49 30 239 165 67'],
                 },
                 {
                   icon: Mail,
                   title: 'Email',
-                  lines: ['hello@mamisfoodandwine.com'],
+                  lines: ['hello@mamis-berlin.de'],
                 },
                 {
                   icon: Clock,
                   title: 'Hours',
                   lines: [
-                    'Monday: Closed',
-                    'Tue — Thu: 5:00 PM — 10:00 PM',
-                    'Friday: 5:00 PM — 11:00 PM',
-                    'Sat: 12:00 PM — 11:00 PM',
-                    'Sun: 12:00 PM — 9:00 PM',
+                    'Montag: Geschlossen',
+                    'Di — Do: 18:00 — 00:00',
+                    'Freitag: 18:00 — 01:00',
+                    'Samstag: 18:00 — 01:00',
+                    'Sonntag: Geschlossen',
                   ],
                 },
               ].map((item) => (
@@ -189,7 +189,7 @@ export default function Contact() {
               <div className="w-14 h-14 bg-wine/10 rounded-full flex items-center justify-center mx-auto mb-3">
                 <MapPin size={24} className="text-wine" />
               </div>
-              <p className="text-wine-dark font-semibold">123 Wine Street, Little Italy</p>
+              <p className="text-wine-dark font-semibold">Oderberger Straße 13, 10435 Berlin</p>
               <p className="text-warm-gray text-sm mt-1">Interactive map coming soon</p>
             </div>
           </div>

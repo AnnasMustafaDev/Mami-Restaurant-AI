@@ -32,11 +32,11 @@ export default function Header() {
       <div className="bg-wine-dark text-white/70 text-xs py-1.5 hidden sm:block">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           <span style={{ fontFamily: "'Cormorant Garamond', serif", letterSpacing: '0.05em' }}>
-            Authentic Italian-Mediterranean Cuisine
+            Willkommen bei Marcel &amp; Miriam — Oderberger Straße 13, 10435 Berlin
           </span>
-          <a href="tel:+12125556264" className="flex items-center gap-1.5 hover:text-gold transition-colors">
+          <a href="tel:+493023916567" className="flex items-center gap-1.5 hover:text-gold transition-colors">
             <Phone size={11} />
-            <span>+1 (212) 555-MAMI</span>
+            <span>+49 30 239 165 67</span>
           </a>
         </div>
       </div>

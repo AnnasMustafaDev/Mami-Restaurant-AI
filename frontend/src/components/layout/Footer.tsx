@@ -29,10 +29,14 @@ export default function Footer() {
           {/* Contact */}
           <div>
             <h4 className="text-sm font-semibold text-gold mb-3 uppercase tracking-wider">Visit Us</h4>
-            <p className="text-sm">123 Wine Street, Little Italy</p>
-            <p className="text-sm">New York, NY 10013</p>
-            <p className="text-sm mt-2">+1 (212) 555-MAMI</p>
-            <p className="text-sm">hello@mamisfoodandwine.com</p>
+            <p className="text-sm">Oderberger Straße 13</p>
+            <p className="text-sm">10435 Berlin</p>
+            <p className="text-sm mt-2">
+              <a href="tel:+493023916567" className="hover:text-gold transition-colors">+49 30 239 165 67</a>
+            </p>
+            <p className="text-sm">
+              <a href="mailto:hello@mamis-berlin.de" className="hover:text-gold transition-colors">hello@mamis-berlin.de</a>
+            </p>
           </div>
         </div>
 
