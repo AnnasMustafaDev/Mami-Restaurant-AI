@@ -14,6 +14,7 @@ bcrypt==4.2.1
 
 # Validation (included with FastAPI but pinning)
 pydantic==2.10.4
+pydantic-core==2.27.2
 pydantic-settings==2.7.1
 
 # HTTP
