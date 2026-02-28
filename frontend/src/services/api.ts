@@ -1,14 +1,25 @@
 import axios from 'axios';
 
+// When VITE_API_URL is an absolute URL (production), Axios URL resolution
+// treats paths starting with '/' as root-relative, stripping any base path.
+// We fix this by building the full URL in the interceptor instead.
+const API_BASE = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '');
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL ?? '/api',
+  baseURL: API_BASE ?? '/api',
   headers: { 'Content-Type': 'application/json' },
 });
 
-// Add auth token for admin requests
 api.interceptors.request.use((config) => {
+  // Fix Axios baseURL + absolute path stripping issue in production
+  if (API_BASE && config.url) {
+    const path = config.url.startsWith('/') ? config.url : `/${config.url}`;
+    config.url = `${API_BASE}${path}`;
+    config.baseURL = undefined;
+  }
+
   const token = localStorage.getItem('admin_token');
-  if (token && config.url?.startsWith('/admin')) {
+  if (token && config.url?.includes('/admin')) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
