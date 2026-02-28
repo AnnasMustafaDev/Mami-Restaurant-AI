@@ -3,7 +3,12 @@ import axios from 'axios';
 // When VITE_API_URL is an absolute URL (production), Axios URL resolution
 // treats paths starting with '/' as root-relative, stripping any base path.
 // We fix this by building the full URL in the interceptor instead.
-const API_BASE = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '');
+// We also normalise the value: strip trailing slash, then ensure it ends with /api
+// (so both https://backend.com and https://backend.com/api work as the env var).
+const _rawBase = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '');
+const API_BASE = _rawBase
+  ? _rawBase.endsWith('/api') ? _rawBase : `${_rawBase}/api`
+  : undefined;
 
 const api = axios.create({
   baseURL: API_BASE ?? '/api',
