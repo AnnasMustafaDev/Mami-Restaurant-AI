@@ -18,8 +18,8 @@ interface SpeechRecognitionEvent {
 
 export default function VoiceOrb({ ensureSession, addMessage }: VoiceOrbProps) {
   const [state, setState] = useState<VoiceState>('idle');
-  const [transcript, setTranscript] = useState('');
-  const [response, setResponse] = useState('');
+  const [_transcript, setTranscript] = useState('');
+  const [_response, setResponse] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [supported, setSupported] = useState(true);
   const [lang, setLang] = useState<VoiceLang>('en-US');
