@@ -1,4 +1,4 @@
-from sqlalchemy import String, Integer, Text, ForeignKey, UniqueConstraint, text
+from sqlalchemy import String, Integer, Text, ForeignKey, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
@@ -20,6 +20,6 @@ class Reservation(Base):
     special_requests: Mapped[str | None] = mapped_column(Text)
     status: Mapped[str] = mapped_column(String(20), default="confirmed")
     source: Mapped[str] = mapped_column(String(20), default="web")
-    created_at: Mapped[str] = mapped_column(String, server_default=text("(datetime('now'))"))
+    created_at: Mapped[str] = mapped_column(String, server_default=func.now())
 
     table = relationship("RestaurantTable", back_populates="reservations")

@@ -1,6 +1,6 @@
 import json
 
-from sqlalchemy import String, Integer, Float, Text, text
+from sqlalchemy import String, Integer, Float, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
@@ -18,7 +18,7 @@ class MenuItem(Base):
     image_url: Mapped[str | None] = mapped_column(String(500))
     is_available: Mapped[int] = mapped_column(Integer, default=1)
     is_special: Mapped[int] = mapped_column(Integer, default=0)
-    created_at: Mapped[str] = mapped_column(String, server_default=text("(datetime('now'))"))
+    created_at: Mapped[str] = mapped_column(String, server_default=func.now())
 
     # Relationships
     wine_pairings_as_dish = relationship(

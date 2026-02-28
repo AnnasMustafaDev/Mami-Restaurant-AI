@@ -8,8 +8,8 @@ class Settings(BaseSettings):
     DEBUG: bool = True
     API_PREFIX: str = "/api"
 
-    # Database
-    DATABASE_URL: str = "sqlite+aiosqlite:///./data/mami.db"
+    # Database (PostgreSQL via asyncpg)
+    DATABASE_URL: str = "postgresql+asyncpg://localhost/mami"
 
     # Auth
     SECRET_KEY: str = "change-me-in-production-use-a-random-string"
