@@ -20,7 +20,7 @@ services:
       - key: JWT_SECRET_KEY
         generateValue: true
       - key: CORS_ORIGINS
-        value: '["https://mamis-backend.onrender.com"]'
+        value: '["https://mami-restaurant-ai.vercel.app","http://localhost:5173"]'
       - key: OPENAI_API_KEY
         sync: false
       - key: OPENAI_MODEL
