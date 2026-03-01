@@ -7,7 +7,7 @@ import SofiaAvatar, { type SofiaExpression } from './SofiaAvatar';
 
 const quickReplies = [
   { icon: '🍷', label: 'Wine pairings',    query: 'Wine pairing' },
-  { icon: '📅', label: 'Reserve a table',  query: 'Make a reservation' },
+  { icon: '📅', label: 'Book a table',      query: 'Make a reservation' },
   { icon: '🍽️', label: "Today's specials", query: "Today's specials" },
   { icon: '✨', label: 'See the menu',     query: 'See menu' },
 ];
@@ -34,25 +34,20 @@ export default function ChatWidget() {
   const speakTimerRef   = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevMsgCount    = useRef(messages.length);
 
-  // Auto-scroll
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Focus input on open
   useEffect(() => {
     if (isOpen && !voiceMode) setTimeout(() => inputRef.current?.focus(), 320);
   }, [isOpen, voiceMode]);
 
-  // Sofia state machine — loading / typing / closed
   useEffect(() => {
     if (!isOpen)       { setSofiaExpr('idle');      return; }
     if (isLoading)     { setSofiaExpr('thinking');  return; }
     if (input.length > 0) { setSofiaExpr('listening'); return; }
-    // When loading ends with empty input, let the message-arrival effect handle it
   }, [isOpen, isLoading, input]);
 
-  // React to new assistant messages
   useEffect(() => {
     if (messages.length > prevMsgCount.current) {
       const last = messages[messages.length - 1];
@@ -66,7 +61,6 @@ export default function ChatWidget() {
     }
   }, [messages]);
 
-  // Cleanup timer on unmount
   useEffect(() => () => { if (speakTimerRef.current) clearTimeout(speakTimerRef.current); }, []);
 
   const handleSend = () => {
@@ -80,7 +74,6 @@ export default function ChatWidget() {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
   };
 
-  // Sync voice orb state → Sofia expression
   const handleVoiceStateChange = useCallback((state: string) => {
     const map: Record<string, SofiaExpression> = {
       idle: 'idle', listening: 'listening', thinking: 'thinking', speaking: 'speaking',
@@ -90,7 +83,7 @@ export default function ChatWidget() {
 
   return (
     <>
-      {/* ── FLOATING BUBBLE ── */}
+      {/* Floating Bubble */}
       <AnimatePresence>
         {!isOpen && (
           <motion.button
@@ -100,16 +93,16 @@ export default function ChatWidget() {
             exit={{ scale: 0, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 520, damping: 26 }}
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-wine text-white rounded-full shadow-xl hover:bg-wine-dark transition-colors flex items-center justify-center"
+            className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-primary text-white rounded-full shadow-xl hover:bg-primary-dark hover:shadow-2xl transition-all duration-200 flex items-center justify-center"
             aria-label="Open chat with Sofia"
           >
             <MessageCircle size={24} />
-            <span className="absolute top-0 right-0 w-3.5 h-3.5 bg-gold rounded-full border-2 border-white animate-pulse" />
+            <span className="absolute top-0 right-0 w-3.5 h-3.5 bg-accent rounded-full border-2 border-white animate-pulse" />
           </motion.button>
         )}
       </AnimatePresence>
 
-      {/* ── CHAT PANEL ── */}
+      {/* Chat Panel */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -118,37 +111,38 @@ export default function ChatWidget() {
             animate={{ opacity: 1, y: 0,  scale: 1    }}
             exit={{ opacity: 0, y: 24, scale: 0.97 }}
             transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-            className="fixed bottom-6 right-6 z-50 w-[390px] h-[600px] max-h-[85vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-wine/10 bg-cream"
+            className="fixed bottom-6 right-6 z-50 w-[390px] h-[600px] max-h-[85vh] rounded-[--radius-xl] shadow-2xl flex flex-col overflow-hidden border border-primary/10 bg-bg"
+            role="dialog"
+            aria-label="Chat with Sofia, your dining concierge"
           >
-            {/* ── HEADER ── */}
-            <div className="shrink-0 px-4 py-3 bg-wine/95 backdrop-blur-md border-b border-white/10 flex items-center justify-between">
+            {/* Header */}
+            <div className="shrink-0 px-4 py-3 bg-gradient-to-r from-primary to-primary-dark border-b border-white/10 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                {/* Avatar with expression + online dot */}
                 <div className="relative shrink-0">
                   <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/25 shadow-md">
                     <SofiaAvatar expression={sofiaExpr} size={48} />
                   </div>
-                  <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-wine/90 animate-pulse" />
+                  <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-primary animate-pulse" />
                 </div>
                 <div>
-                  <p className="font-semibold text-sm text-white" style={{ fontFamily: "'Playfair Display', serif" }}>
+                  <p className="font-semibold text-sm text-white font-[Poppins]">
                     Sofia
                   </p>
-                  <p className="text-xs text-white/65">Virtual Host · Online</p>
+                  <p className="text-xs text-white/65">Your Dining Concierge</p>
                 </div>
               </div>
 
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-2 hover:bg-white/10 rounded-lg transition-colors text-white/75"
+                className="p-2 hover:bg-white/10 rounded-[--radius-sm] transition-colors duration-200 text-white/75"
                 aria-label="Close chat"
               >
                 <X size={17} />
               </button>
             </div>
 
-            {/* ── MESSAGES (shared scroll area) ── */}
-            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 bg-cream">
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 bg-bg">
               <AnimatePresence initial={false}>
                 {messages.map((msg) => (
                   <motion.div
@@ -162,7 +156,7 @@ export default function ChatWidget() {
                 ))}
               </AnimatePresence>
 
-              {/* ── THINKING INDICATOR ── */}
+              {/* Thinking Indicator */}
               <AnimatePresence>
                 {isLoading && (
                   <motion.div
@@ -172,10 +166,10 @@ export default function ChatWidget() {
                     exit={{ opacity: 0 }}
                     className="flex items-center gap-2"
                   >
-                    <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 bg-wine/10">
+                    <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 bg-primary/10">
                       <SofiaAvatar expression="thinking" size={28} />
                     </div>
-                    <div className="bg-white rounded-2xl rounded-tl-sm px-3.5 py-2.5 shadow-sm flex items-center gap-1.5">
+                    <div className="bg-card rounded-[--radius-lg] rounded-tl-sm px-3.5 py-2.5 shadow-sm flex items-center gap-1.5">
                       <span className="wine-drop-dot" style={{ animationDelay: '0ms'   }} />
                       <span className="wine-drop-dot" style={{ animationDelay: '200ms' }} />
                       <span className="wine-drop-dot" style={{ animationDelay: '400ms' }} />
@@ -184,7 +178,7 @@ export default function ChatWidget() {
                 )}
               </AnimatePresence>
 
-              {/* ── QUICK REPLY CARDS ── */}
+              {/* Quick Reply Cards */}
               {messages.length === 1 && !voiceMode && (
                 <motion.div
                   initial={{ opacity: 0, y: 8 }}
@@ -196,10 +190,10 @@ export default function ChatWidget() {
                     <button
                       key={label}
                       onClick={() => sendMessage(query)}
-                      className="flex items-center gap-2 bg-white border border-wine/15 rounded-xl px-3 py-2.5 text-left hover:border-wine/40 hover:bg-wine/5 hover:shadow-sm transition-all group"
+                      className="flex items-center gap-2 bg-card border border-primary/10 rounded-[--radius-md] px-3 py-2.5 text-left hover:border-primary/30 hover:bg-primary/5 hover:shadow-sm transition-all duration-200 group"
                     >
                       <span className="text-base shrink-0">{icon}</span>
-                      <span className="text-xs text-warm-gray group-hover:text-wine font-medium leading-tight transition-colors">
+                      <span className="text-xs text-text-secondary group-hover:text-primary font-medium leading-tight transition-colors">
                         {label}
                       </span>
                     </button>
@@ -207,7 +201,7 @@ export default function ChatWidget() {
                 </motion.div>
               )}
 
-              {/* ── VOICE ORB (shown inline in message area when voice mode) ── */}
+              {/* Voice Orb */}
               <AnimatePresence>
                 {voiceMode && (
                   <motion.div
@@ -230,11 +224,10 @@ export default function ChatWidget() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* ── BOTTOM BAR (input in text mode / back-to-text in voice mode) ── */}
-            <div className="px-3 py-2.5 border-t border-wine/10 bg-white shrink-0">
+            {/* Bottom Bar */}
+            <div className="px-3 py-2.5 border-t border-primary/10 bg-card shrink-0">
               <AnimatePresence mode="wait" initial={false}>
                 {voiceMode ? (
-                  /* Voice mode — single "switch to text" button */
                   <motion.button
                     key="back-to-text"
                     initial={{ opacity: 0, y: 6 }}
@@ -242,13 +235,12 @@ export default function ChatWidget() {
                     exit={{ opacity: 0, y: 6 }}
                     transition={{ duration: 0.18 }}
                     onClick={() => setVoiceMode(false)}
-                    className="w-full flex items-center justify-center gap-2 py-2 text-sm text-wine font-medium hover:bg-wine/5 rounded-lg transition-colors border border-wine/20"
+                    className="w-full flex items-center justify-center gap-2 py-2 text-sm text-primary font-medium hover:bg-primary/5 rounded-[--radius-sm] transition-colors duration-200 border border-primary/20"
                   >
                     <MessageSquare size={15} />
                     Switch to text chat
                   </motion.button>
                 ) : (
-                  /* Text mode — mic + input + send */
                   <motion.div
                     key="text-input"
                     initial={{ opacity: 0, y: 6 }}
@@ -259,7 +251,7 @@ export default function ChatWidget() {
                   >
                     <button
                       onClick={() => setVoiceMode(true)}
-                      className="p-2 text-warm-gray hover:text-wine hover:bg-wine/8 rounded-lg transition-colors shrink-0"
+                      className="p-2 text-text-secondary hover:text-primary hover:bg-primary/8 rounded-[--radius-sm] transition-colors duration-200 shrink-0"
                       title="Switch to voice"
                       aria-label="Switch to voice mode"
                     >
@@ -271,14 +263,14 @@ export default function ChatWidget() {
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
                       onKeyDown={handleKeyDown}
-                      placeholder="Ask Sofia anything..."
+                      placeholder="Ask about specials, allergies, or booking..."
                       disabled={isLoading}
-                      className="flex-1 px-3 py-2 text-sm bg-cream rounded-lg outline-none placeholder:text-warm-gray/50 border border-transparent focus:border-wine/25 transition-colors"
+                      className="flex-1 px-3 py-2 text-sm bg-bg rounded-[--radius-sm] outline-none placeholder:text-text-muted/60 border border-transparent focus:border-primary/25 transition-colors duration-200"
                     />
                     <button
                       onClick={handleSend}
                       disabled={!input.trim() || isLoading}
-                      className="p-2 bg-wine text-white rounded-lg hover:bg-wine-dark transition-colors disabled:opacity-40 shrink-0"
+                      className="p-2 bg-primary text-white rounded-[--radius-sm] hover:bg-primary-dark transition-colors duration-200 disabled:opacity-40 shrink-0"
                       aria-label="Send message"
                     >
                       <Send size={16} />
@@ -294,7 +286,6 @@ export default function ChatWidget() {
   );
 }
 
-/* ── CHAT BUBBLE ── */
 function ChatBubble({ message }: { message: ChatMessage }) {
   const isUser  = message.role === 'user';
   const isVoice = message.source === 'voice';
@@ -303,7 +294,7 @@ function ChatBubble({ message }: { message: ChatMessage }) {
   return (
     <div className={`flex items-end gap-2 ${isUser ? 'flex-row-reverse' : ''}`}>
       {!isUser && (
-        <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 bg-wine/10 mb-0.5">
+        <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 bg-primary/10 mb-0.5">
           <SofiaAvatar expression={isRec ? 'recommending' : 'idle'} size={28} />
         </div>
       )}
@@ -311,10 +302,10 @@ function ChatBubble({ message }: { message: ChatMessage }) {
         <div
           className={`px-3.5 py-2.5 text-sm leading-relaxed shadow-sm ${
             isUser
-              ? 'bg-wine text-white rounded-2xl rounded-tr-sm msg-slide-right'
+              ? 'bg-primary text-white rounded-[--radius-lg] rounded-tr-sm msg-slide-right'
               : isRec
-              ? 'bg-gradient-to-br from-wine/10 to-wine/5 text-gray-800 rounded-2xl rounded-tl-sm italic border border-wine/10 msg-slide-left'
-              : 'bg-white text-gray-800 rounded-2xl rounded-tl-sm msg-slide-left'
+              ? 'bg-gradient-to-br from-primary/8 to-primary/4 text-text rounded-[--radius-lg] rounded-tl-sm italic border border-primary/10 msg-slide-left'
+              : 'bg-card text-text rounded-[--radius-lg] rounded-tl-sm msg-slide-left'
           }`}
         >
           {message.content}
@@ -322,9 +313,9 @@ function ChatBubble({ message }: { message: ChatMessage }) {
         {isVoice && (
           <span
             title="Via voice"
-            className={`absolute -bottom-1 ${isUser ? '-left-1' : '-right-1'} w-4 h-4 rounded-full flex items-center justify-center bg-white border border-wine/20 shadow-sm`}
+            className={`absolute -bottom-1 ${isUser ? '-left-1' : '-right-1'} w-4 h-4 rounded-full flex items-center justify-center bg-card border border-primary/20 shadow-sm`}
           >
-            <Mic size={9} className="text-wine/60" />
+            <Mic size={9} className="text-primary/60" />
           </span>
         )}
       </div>

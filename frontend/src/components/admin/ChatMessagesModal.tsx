@@ -33,18 +33,28 @@ export default function ChatMessagesModal({ sessionId, onClose }: ChatMessagesMo
   }, [sessionId]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-text/40 backdrop-blur-sm"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Chat conversation"
+    >
       <div
-        className="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[80vh] flex flex-col"
+        className="bg-card rounded-[--radius-xl] shadow-2xl w-full max-w-lg max-h-[80vh] flex flex-col border border-primary/5"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-primary/5">
           <div>
-            <h3 className="font-semibold text-gray-900">Chat Conversation</h3>
-            <p className="text-xs text-gray-500 mt-0.5">Session: {sessionId.slice(0, 8)}...</p>
+            <h3 className="font-semibold text-text font-[Poppins]">Chat Conversation</h3>
+            <p className="text-xs text-text-muted mt-0.5">Session: {sessionId.slice(0, 8)}...</p>
           </div>
-          <button onClick={onClose} className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+          <button
+            onClick={onClose}
+            className="p-1.5 hover:bg-primary/5 rounded-[--radius-sm] transition-colors duration-200"
+            aria-label="Close conversation"
+          >
             <X size={18} />
           </button>
         </div>
@@ -52,14 +62,14 @@ export default function ChatMessagesModal({ sessionId, onClose }: ChatMessagesMo
         {/* Messages */}
         <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
           {loading ? (
-            <p className="text-sm text-gray-500 text-center py-8">Loading messages...</p>
+            <p className="text-sm text-text-secondary text-center py-8">Loading messages...</p>
           ) : error ? (
             <div className="text-center py-8">
-              <p className="text-red-600 text-sm font-medium">Failed to load messages</p>
-              <p className="text-gray-500 text-xs mt-1">{error}</p>
+              <p className="text-error text-sm font-medium">Failed to load messages</p>
+              <p className="text-text-muted text-xs mt-1">{error}</p>
             </div>
           ) : messages.length === 0 ? (
-            <p className="text-sm text-gray-500 text-center py-8">No messages in this session.</p>
+            <p className="text-sm text-text-secondary text-center py-8">No messages in this session.</p>
           ) : (
             messages.map((msg) => (
               <div
@@ -67,16 +77,16 @@ export default function ChatMessagesModal({ sessionId, onClose }: ChatMessagesMo
                 className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-[80%] px-3 py-2 rounded-xl text-sm ${
+                  className={`max-w-[80%] px-3.5 py-2.5 text-sm leading-relaxed ${
                     msg.role === 'user'
-                      ? 'bg-blue-600 text-white rounded-br-sm'
-                      : 'bg-gray-100 text-gray-800 rounded-bl-sm'
+                      ? 'bg-primary text-white rounded-[--radius-lg] rounded-br-sm'
+                      : 'bg-bg text-text rounded-[--radius-lg] rounded-bl-sm'
                   }`}
                 >
                   <p className="whitespace-pre-wrap">{msg.content}</p>
                   <p
                     className={`text-[10px] mt-1 ${
-                      msg.role === 'user' ? 'text-blue-200' : 'text-gray-400'
+                      msg.role === 'user' ? 'text-white/50' : 'text-text-muted'
                     }`}
                   >
                     {new Date(msg.created_at).toLocaleTimeString()}

@@ -1,21 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap');
+
 @import "tailwindcss";
 
-/* MaMi's Food & Wine — Custom Theme */
+/* MaMi's Food & Wine — Design System */
 @theme {
-  --color-wine: #722F37;
-  --color-wine-dark: #4A1C23;
-  --color-wine-light: #8B3A42;
-  --color-gold: #C9A96E;
-  --color-gold-light: #D4B97D;
-  --color-cream: #FDF8F4;
-  --color-cream-dark: #F5EDE4;
-  --color-olive: #5C7A3B;
-  --color-warm-gray: #6B5C56;
-  --color-error: #B33A3A;
-}
+  /* Primary palette — warm, appetite-evoking */
+  --color-primary: #C74E39;
+  --color-primary-dark: #A33D2D;
+  --color-primary-light: #D4654F;
 
-/* Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap');
+  /* Accent — mustard / culinary warmth */
+  --color-accent: #E0A030;
+  --color-accent-light: #EABB5C;
+
+  /* Backgrounds */
+  --color-bg: #F9F7F2;
+  --color-bg-alt: #F3EFE8;
+  --color-card: #FFFFFF;
+
+  /* Text */
+  --color-text: #2B2A29;
+  --color-text-secondary: #6F6E6E;
+  --color-text-muted: #9A9898;
+
+  /* Semantic */
+  --color-success: #3D8B5E;
+  --color-error: #B33A3A;
+  --color-info: #3B6FA0;
+
+  /* Legacy aliases for smooth migration */
+  --color-wine: #C74E39;
+  --color-wine-dark: #A33D2D;
+  --color-wine-light: #D4654F;
+  --color-gold: #E0A030;
+  --color-gold-light: #EABB5C;
+  --color-cream: #F9F7F2;
+  --color-cream-dark: #F3EFE8;
+  --color-olive: #3D8B5E;
+  --color-warm-gray: #6F6E6E;
+
+  /* Spacing & radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+}
 
 html {
   scroll-behavior: smooth;
@@ -24,14 +53,16 @@ html {
 body {
   margin: 0;
   font-family: 'Inter', system-ui, sans-serif;
-  background-color: var(--color-cream);
-  color: #1A1A1A;
+  background-color: var(--color-bg);
+  color: var(--color-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Poppins', sans-serif;
+  line-height: 1.2;
 }
 
 /* Custom Scrollbar */
@@ -39,14 +70,14 @@ h1, h2, h3, h4, h5, h6 {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--color-cream);
+  background: var(--color-bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-wine);
+  background: var(--color-primary);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-wine-dark);
+  background: var(--color-primary-dark);
 }
 
 /* Decorative Ornament Divider */
@@ -55,7 +86,7 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
-  color: var(--color-gold);
+  color: var(--color-accent);
   font-size: 1.25rem;
 }
 .divider-ornament::before,
@@ -63,22 +94,22 @@ h1, h2, h3, h4, h5, h6 {
   content: '';
   flex: 0 1 80px;
   height: 1px;
-  background: linear-gradient(to right, transparent, var(--color-gold), transparent);
+  background: linear-gradient(to right, transparent, var(--color-accent), transparent);
 }
 
 /* Gradient Overlays */
 .hero-overlay {
   background: linear-gradient(
     135deg,
-    rgba(74, 28, 35, 0.85) 0%,
-    rgba(74, 28, 35, 0.7) 40%,
-    rgba(114, 47, 55, 0.6) 100%
+    rgba(43, 42, 41, 0.88) 0%,
+    rgba(43, 42, 41, 0.72) 40%,
+    rgba(199, 78, 57, 0.55) 100%
   );
 }
 
 /* Glass Effect */
 .glass {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
 }
@@ -103,13 +134,13 @@ h1, h2, h3, h4, h5, h6 {
   animation: float 6s ease-in-out infinite;
 }
 
-/* Subtle scale on hover for cards */
+/* Card hover — consistent transition */
 .card-hover {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 .card-hover:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(114, 47, 55, 0.12);
+  box-shadow: 0 12px 40px rgba(199, 78, 57, 0.1);
 }
 
 /* Image zoom on hover */
@@ -120,7 +151,7 @@ h1, h2, h3, h4, h5, h6 {
   transition: transform 0.6s ease;
 }
 .img-zoom:hover img {
-  transform: scale(1.08);
+  transform: scale(1.06);
 }
 
 /* Chat message slide-in */
@@ -141,15 +172,32 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Selection color */
 ::selection {
-  background: rgba(114, 47, 55, 0.2);
-  color: var(--color-wine-dark);
+  background: rgba(199, 78, 57, 0.15);
+  color: var(--color-primary-dark);
+}
+
+/* Focus visible ring */
+*:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Section spacing utility */
+.section-spacing {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+@media (min-width: 640px) {
+  .section-spacing {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
 }
 
 /* ============================
    SOFIA AVATAR — EXPRESSION STATES
    ============================ */
 
-/* Hide state-specific elements by default */
 .sofia-avatar .eyebrow-r-raised,
 .sofia-avatar .wink-r,
 .sofia-avatar .mouth-open,
@@ -159,7 +207,6 @@ h1, h2, h3, h4, h5, h6 {
   display: none;
 }
 
-/* Transform helper — all animatable SVG elements */
 .sofia-avatar .eye-l,
 .sofia-avatar .eye-r,
 .sofia-avatar .eyebrow-l,
@@ -173,7 +220,6 @@ h1, h2, h3, h4, h5, h6 {
   transition: transform 0.28s ease;
 }
 
-/* === IDLE — subtle breathing on whole SVG === */
 @keyframes sofiaBreath {
   0%, 100% { transform: scale(1); }
   50%       { transform: scale(1.009); }
@@ -183,7 +229,6 @@ h1, h2, h3, h4, h5, h6 {
   animation: sofiaBreath 4.5s ease-in-out infinite;
 }
 
-/* === LISTENING — wide eyes, raised brows === */
 .sofia-expr-listening .eye-l,
 .sofia-expr-listening .eye-r {
   transform: scaleY(1.22);
@@ -193,7 +238,6 @@ h1, h2, h3, h4, h5, h6 {
   transform: translateY(-2.5px);
 }
 
-/* === THINKING — pupils up-left, left brow furrow === */
 .sofia-expr-thinking .iris-l,
 .sofia-expr-thinking .iris-r,
 .sofia-expr-thinking .pupil-l,
@@ -207,7 +251,6 @@ h1, h2, h3, h4, h5, h6 {
   display: block;
 }
 
-/* Thinking dots cascade */
 @keyframes thinkPop {
   0%, 100% { opacity: 0.2; transform: scale(0.65); }
   50%       { opacity: 1;   transform: scale(1.15); }
@@ -222,7 +265,6 @@ h1, h2, h3, h4, h5, h6 {
 .sofia-avatar .think-d2 { animation: thinkPop 1.2s ease-in-out 0.35s   infinite; }
 .sofia-avatar .think-d3 { animation: thinkPop 1.2s ease-in-out 0.7s    infinite; }
 
-/* === SPEAKING — open mouth, animated === */
 .sofia-expr-speaking .mouth-closed { display: none; }
 .sofia-expr-speaking .mouth-open   { display: block; }
 
@@ -236,7 +278,6 @@ h1, h2, h3, h4, h5, h6 {
   animation: mouthSpeak 0.44s ease-in-out infinite;
 }
 
-/* === RECOMMENDING — smirk, right wink, raised brow, wine glass === */
 .sofia-expr-recommending .mouth-closed   { display: none;  }
 .sofia-expr-recommending .mouth-smirk    { display: block; }
 .sofia-expr-recommending .eye-r          { display: none;  }
@@ -263,7 +304,7 @@ h1, h2, h3, h4, h5, h6 {
   display: inline-block;
   width: 7px;
   height: 9px;
-  background: var(--color-wine);
+  background: var(--color-primary);
   border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
   animation: wineDropBounce 1.2s ease-in-out infinite;
 }
@@ -276,5 +317,30 @@ h1, h2, h3, h4, h5, h6 {
   50% {
     transform: rotate(180deg) scaleY(1) translateY(0);
     opacity: 1;
+  }
+}
+
+/* Admin table row striping */
+.admin-table tbody tr:nth-child(even) {
+  background-color: #FAFAFA;
+}
+.admin-table tbody tr:hover {
+  background-color: #F5F3EE;
+}
+
+/* Mobile sticky bottom bar */
+@media (max-width: 767px) {
+  .mobile-sticky-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 40;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(199, 78, 57, 0.1);
+    padding: 0.75rem 1rem;
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
   }
 }

@@ -89,8 +89,8 @@ export default function AdminContact() {
   if (isLoading) {
     return (
       <div className="p-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Contact Details</h1>
-        <div className="text-gray-500 text-sm">Loading...</div>
+        <h1 className="text-2xl font-bold font-[Poppins] text-text mb-6">Contact Details</h1>
+        <div className="text-text-secondary text-sm">Loading...</div>
       </div>
     );
   }
@@ -98,10 +98,10 @@ export default function AdminContact() {
   if (isError) {
     return (
       <div className="p-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Contact Details</h1>
+        <h1 className="text-2xl font-bold font-[Poppins] text-text mb-6">Contact Details</h1>
         <div className="text-center py-8">
-          <p className="text-red-600 text-sm font-medium">Failed to load contact details</p>
-          <button onClick={() => refetch()} className="mt-3 text-xs text-blue-600 hover:text-blue-800 font-medium">Try again</button>
+          <p className="text-error text-sm font-medium">Failed to load contact details</p>
+          <button onClick={() => refetch()} className="mt-3 text-xs text-primary hover:text-primary-dark font-medium transition-colors duration-200">Try again</button>
         </div>
       </div>
     );
@@ -111,12 +111,12 @@ export default function AdminContact() {
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Contact Details</h1>
-          <p className="text-sm text-gray-500 mt-1">Edit the public contact page information</p>
+          <h1 className="text-2xl font-bold font-[Poppins] text-text">Contact Details</h1>
+          <p className="text-sm text-text-secondary mt-1">Edit the public contact page information</p>
         </div>
         <button
           onClick={() => refetch()}
-          className="flex items-center gap-2 px-3 py-2 text-sm bg-white border rounded-lg hover:bg-gray-50 transition-colors"
+          className="flex items-center gap-2 px-3 py-2 text-sm bg-card border border-primary/5 rounded-[--radius-md] hover:bg-bg transition-colors duration-200"
         >
           <RefreshCw size={16} />
           Refresh
@@ -125,10 +125,10 @@ export default function AdminContact() {
 
       <form onSubmit={handleSubmit} className="space-y-6 max-w-3xl">
         {/* Address */}
-        <div className="bg-white rounded-xl border shadow-sm p-6">
+        <div className="bg-card rounded-[--radius-lg] border border-primary/5 shadow-sm p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Address</h2>
-            <button type="button" onClick={addAddressLine} className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800">
+            <h2 className="text-lg font-semibold font-[Poppins] text-text">Address</h2>
+            <button type="button" onClick={addAddressLine} className="flex items-center gap-1 text-xs text-primary hover:text-primary-dark transition-colors duration-200">
               <Plus size={14} /> Add line
             </button>
           </div>
@@ -140,10 +140,10 @@ export default function AdminContact() {
                   value={line}
                   onChange={(e) => updateAddressLine(i, e.target.value)}
                   placeholder={`Address line ${i + 1}`}
-                  className="flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+                  className="flex-1 px-3 py-2 border border-primary/5 rounded-[--radius-md] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors duration-200"
                 />
                 {form.address_lines.length > 1 && (
-                  <button type="button" onClick={() => removeAddressLine(i)} className="text-red-400 hover:text-red-600">
+                  <button type="button" onClick={() => removeAddressLine(i)} className="text-error/60 hover:text-error transition-colors duration-200">
                     <Trash2 size={16} />
                   </button>
                 )}
@@ -153,26 +153,26 @@ export default function AdminContact() {
         </div>
 
         {/* Phone & Email */}
-        <div className="bg-white rounded-xl border shadow-sm p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Contact Info</h2>
+        <div className="bg-card rounded-[--radius-lg] border border-primary/5 shadow-sm p-6">
+          <h2 className="text-lg font-semibold font-[Poppins] text-text mb-4">Contact Info</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+              <label className="block text-sm font-medium text-text mb-1">Phone</label>
               <input
                 type="text"
                 value={form.phone}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+                className="w-full px-3 py-2 border border-primary/5 rounded-[--radius-md] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors duration-200"
                 placeholder="+49 30 239 165 67"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <label className="block text-sm font-medium text-text mb-1">Email</label>
               <input
                 type="email"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+                className="w-full px-3 py-2 border border-primary/5 rounded-[--radius-md] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors duration-200"
                 placeholder="hello@mamis-berlin.de"
               />
             </div>
@@ -180,10 +180,10 @@ export default function AdminContact() {
         </div>
 
         {/* Hours */}
-        <div className="bg-white rounded-xl border shadow-sm p-6">
+        <div className="bg-card rounded-[--radius-lg] border border-primary/5 shadow-sm p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Opening Hours</h2>
-            <button type="button" onClick={addHour} className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800">
+            <h2 className="text-lg font-semibold font-[Poppins] text-text">Opening Hours</h2>
+            <button type="button" onClick={addHour} className="flex items-center gap-1 text-xs text-primary hover:text-primary-dark transition-colors duration-200">
               <Plus size={14} /> Add line
             </button>
           </div>
@@ -195,10 +195,10 @@ export default function AdminContact() {
                   value={hour}
                   onChange={(e) => updateHour(i, e.target.value)}
                   placeholder="e.g. Montag: Geschlossen"
-                  className="flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+                  className="flex-1 px-3 py-2 border border-primary/5 rounded-[--radius-md] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors duration-200"
                 />
                 {form.hours.length > 1 && (
-                  <button type="button" onClick={() => removeHour(i)} className="text-red-400 hover:text-red-600">
+                  <button type="button" onClick={() => removeHour(i)} className="text-error/60 hover:text-error transition-colors duration-200">
                     <Trash2 size={16} />
                   </button>
                 )}
@@ -208,15 +208,15 @@ export default function AdminContact() {
         </div>
 
         {/* Map Address */}
-        <div className="bg-white rounded-xl border shadow-sm p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Map</h2>
+        <div className="bg-card rounded-[--radius-lg] border border-primary/5 shadow-sm p-6">
+          <h2 className="text-lg font-semibold font-[Poppins] text-text mb-4">Map</h2>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Map Display Address</label>
+            <label className="block text-sm font-medium text-text mb-1">Map Display Address</label>
             <input
               type="text"
               value={form.map_address}
               onChange={(e) => setForm({ ...form, map_address: e.target.value })}
-              className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+              className="w-full px-3 py-2 border border-primary/5 rounded-[--radius-md] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors duration-200"
               placeholder="Oderberger Straße 13, 10435 Berlin"
             />
           </div>
@@ -227,7 +227,7 @@ export default function AdminContact() {
           <button
             type="submit"
             disabled={saveMutation.isPending}
-            className="flex items-center gap-2 px-6 py-2.5 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 font-medium"
+            className="flex items-center gap-2 px-6 py-2.5 bg-primary text-white rounded-[--radius-md] hover:bg-primary-dark transition-colors duration-200 disabled:opacity-50 font-medium"
           >
             <Save size={16} />
             {saveMutation.isPending ? 'Saving...' : 'Save Changes'}
