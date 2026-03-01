@@ -18,6 +18,7 @@ from app.schemas.chat import (
     ChatSessionResponse,
 )
 from app.services.llm_service import chat_with_sofia
+from app.services.voice_service import create_voice_token
 
 tts_client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
 
@@ -97,6 +98,42 @@ async def get_session_messages(
     )
     result = await db.execute(query)
     return result.scalars().all()
+
+
+class VoiceTokenRequest(BaseModel):
+    session_id: str | None = None
+
+
+@router.post("/voice-token")
+async def get_voice_token(
+    data: VoiceTokenRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    """Create a LiveKit room token for a voice session.
+
+    If session_id is provided, the token is tied to that existing chat session.
+    Otherwise a new voice session is created automatically.
+    """
+    session_id = data.session_id
+
+    if not session_id:
+        session = ChatSession(id=str(uuid.uuid4()), source="voice")
+        db.add(session)
+        await db.commit()
+        session_id = session.id
+    else:
+        existing = await db.get(ChatSession, session_id)
+        if not existing:
+            raise HTTPException(status_code=404, detail="Session not found")
+
+    token, room_name = create_voice_token(session_id)
+
+    return {
+        "token": token,
+        "url": settings.LIVEKIT_URL,
+        "room_name": room_name,
+        "session_id": session_id,
+    }
 
 
 class TTSRequest(BaseModel):

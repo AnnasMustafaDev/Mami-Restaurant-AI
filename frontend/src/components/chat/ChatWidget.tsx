@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { MessageCircle, X, Send, Mic } from 'lucide-react';
+import { MessageCircle, X, Send, Mic, MessageSquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useChat, type ChatMessage } from '../../hooks/useChat';
 import VoiceOrb from '../voice/VoiceOrb';
@@ -138,123 +138,133 @@ export default function ChatWidget() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={() => setVoiceMode(!voiceMode)}
-                  className={`p-2 rounded-lg transition-all ${
-                    voiceMode ? 'bg-gold text-wine-dark shadow-sm' : 'hover:bg-white/10 text-white/75'
-                  }`}
-                  title={voiceMode ? 'Switch to text' : 'Switch to voice'}
-                >
-                  <Mic size={17} />
-                </button>
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="p-2 hover:bg-white/10 rounded-lg transition-colors text-white/75"
-                  aria-label="Close chat"
-                >
-                  <X size={17} />
-                </button>
-              </div>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="p-2 hover:bg-white/10 rounded-lg transition-colors text-white/75"
+                aria-label="Close chat"
+              >
+                <X size={17} />
+              </button>
             </div>
 
-            {/* ── BODY ── */}
-            {voiceMode ? (
-              /* Voice mode layout */
-              <div className="flex-1 flex flex-col bg-cream overflow-hidden">
-                <div className="flex items-center justify-center py-6 shrink-0">
-                  <VoiceOrb
-                    ensureSession={ensureSession}
-                    addMessage={addMessage}
-                    onStateChange={handleVoiceStateChange}
-                  />
-                </div>
-                {messages.length > 1 && (
-                  <div className="flex-1 overflow-y-auto px-4 py-2 space-y-3 border-t border-wine/10">
-                    <AnimatePresence initial={false}>
-                      {messages.map((msg) => (
-                        <motion.div
-                          key={msg.id}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0  }}
-                          transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-                        >
-                          <ChatBubble message={msg} />
-                        </motion.div>
-                      ))}
-                    </AnimatePresence>
-                    <div ref={messagesEndRef} />
-                  </div>
+            {/* ── MESSAGES (shared scroll area) ── */}
+            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 bg-cream">
+              <AnimatePresence initial={false}>
+                {messages.map((msg) => (
+                  <motion.div
+                    key={msg.id}
+                    initial={{ opacity: 0, y: 10, scale: 0.97 }}
+                    animate={{ opacity: 1, y: 0,  scale: 1    }}
+                    transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                  >
+                    <ChatBubble message={msg} />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+
+              {/* ── THINKING INDICATOR ── */}
+              <AnimatePresence>
+                {isLoading && (
+                  <motion.div
+                    key="thinking"
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="flex items-center gap-2"
+                  >
+                    <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 bg-wine/10">
+                      <SofiaAvatar expression="thinking" size={28} />
+                    </div>
+                    <div className="bg-white rounded-2xl rounded-tl-sm px-3.5 py-2.5 shadow-sm flex items-center gap-1.5">
+                      <span className="wine-drop-dot" style={{ animationDelay: '0ms'   }} />
+                      <span className="wine-drop-dot" style={{ animationDelay: '200ms' }} />
+                      <span className="wine-drop-dot" style={{ animationDelay: '400ms' }} />
+                    </div>
+                  </motion.div>
                 )}
-              </div>
-            ) : (
-              <>
-                {/* ── MESSAGES ── */}
-                <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 bg-cream">
-                  <AnimatePresence initial={false}>
-                    {messages.map((msg) => (
-                      <motion.div
-                        key={msg.id}
-                        initial={{ opacity: 0, y: 10, scale: 0.97 }}
-                        animate={{ opacity: 1, y: 0,  scale: 1    }}
-                        transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-                      >
-                        <ChatBubble message={msg} />
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
+              </AnimatePresence>
 
-                  {/* ── THINKING INDICATOR ── */}
-                  <AnimatePresence>
-                    {isLoading && (
-                      <motion.div
-                        key="thinking"
-                        initial={{ opacity: 0, y: 8  }}
-                        animate={{ opacity: 1, y: 0  }}
-                        exit={{ opacity: 0 }}
-                        className="flex items-center gap-2"
-                      >
-                        <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 bg-wine/10">
-                          <SofiaAvatar expression="thinking" size={28} />
-                        </div>
-                        <div className="bg-white rounded-2xl rounded-tl-sm px-3.5 py-2.5 shadow-sm flex items-center gap-1.5">
-                          <span className="wine-drop-dot" style={{ animationDelay: '0ms'   }} />
-                          <span className="wine-drop-dot" style={{ animationDelay: '200ms' }} />
-                          <span className="wine-drop-dot" style={{ animationDelay: '400ms' }} />
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  {/* ── QUICK REPLY CARDS ── */}
-                  {messages.length === 1 && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.35 }}
-                      className="grid grid-cols-2 gap-2 pt-1"
+              {/* ── QUICK REPLY CARDS ── */}
+              {messages.length === 1 && !voiceMode && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.35 }}
+                  className="grid grid-cols-2 gap-2 pt-1"
+                >
+                  {quickReplies.map(({ icon, label, query }) => (
+                    <button
+                      key={label}
+                      onClick={() => sendMessage(query)}
+                      className="flex items-center gap-2 bg-white border border-wine/15 rounded-xl px-3 py-2.5 text-left hover:border-wine/40 hover:bg-wine/5 hover:shadow-sm transition-all group"
                     >
-                      {quickReplies.map(({ icon, label, query }) => (
-                        <button
-                          key={label}
-                          onClick={() => sendMessage(query)}
-                          className="flex items-center gap-2 bg-white border border-wine/15 rounded-xl px-3 py-2.5 text-left hover:border-wine/40 hover:bg-wine/5 hover:shadow-sm transition-all group"
-                        >
-                          <span className="text-base shrink-0">{icon}</span>
-                          <span className="text-xs text-warm-gray group-hover:text-wine font-medium leading-tight transition-colors">
-                            {label}
-                          </span>
-                        </button>
-                      ))}
-                    </motion.div>
-                  )}
+                      <span className="text-base shrink-0">{icon}</span>
+                      <span className="text-xs text-warm-gray group-hover:text-wine font-medium leading-tight transition-colors">
+                        {label}
+                      </span>
+                    </button>
+                  ))}
+                </motion.div>
+              )}
 
-                  <div ref={messagesEndRef} />
-                </div>
+              {/* ── VOICE ORB (shown inline in message area when voice mode) ── */}
+              <AnimatePresence>
+                {voiceMode && (
+                  <motion.div
+                    key="voice-orb"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1   }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+                    className="flex justify-center py-4"
+                  >
+                    <VoiceOrb
+                      ensureSession={ensureSession}
+                      addMessage={addMessage}
+                      onStateChange={handleVoiceStateChange}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
-                {/* ── INPUT ── */}
-                <div className="px-3 py-2.5 border-t border-wine/10 bg-white shrink-0">
-                  <div className="flex items-center gap-2">
+              <div ref={messagesEndRef} />
+            </div>
+
+            {/* ── BOTTOM BAR (input in text mode / back-to-text in voice mode) ── */}
+            <div className="px-3 py-2.5 border-t border-wine/10 bg-white shrink-0">
+              <AnimatePresence mode="wait" initial={false}>
+                {voiceMode ? (
+                  /* Voice mode — single "switch to text" button */
+                  <motion.button
+                    key="back-to-text"
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 6 }}
+                    transition={{ duration: 0.18 }}
+                    onClick={() => setVoiceMode(false)}
+                    className="w-full flex items-center justify-center gap-2 py-2 text-sm text-wine font-medium hover:bg-wine/5 rounded-lg transition-colors border border-wine/20"
+                  >
+                    <MessageSquare size={15} />
+                    Switch to text chat
+                  </motion.button>
+                ) : (
+                  /* Text mode — mic + input + send */
+                  <motion.div
+                    key="text-input"
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 6 }}
+                    transition={{ duration: 0.18 }}
+                    className="flex items-center gap-2"
+                  >
+                    <button
+                      onClick={() => setVoiceMode(true)}
+                      className="p-2 text-warm-gray hover:text-wine hover:bg-wine/8 rounded-lg transition-colors shrink-0"
+                      title="Switch to voice"
+                      aria-label="Switch to voice mode"
+                    >
+                      <Mic size={17} />
+                    </button>
                     <input
                       ref={inputRef}
                       type="text"
@@ -268,14 +278,15 @@ export default function ChatWidget() {
                     <button
                       onClick={handleSend}
                       disabled={!input.trim() || isLoading}
-                      className="p-2 bg-wine text-white rounded-lg hover:bg-wine-dark transition-colors disabled:opacity-40"
+                      className="p-2 bg-wine text-white rounded-lg hover:bg-wine-dark transition-colors disabled:opacity-40 shrink-0"
+                      aria-label="Send message"
                     >
                       <Send size={16} />
                     </button>
-                  </div>
-                </div>
-              </>
-            )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

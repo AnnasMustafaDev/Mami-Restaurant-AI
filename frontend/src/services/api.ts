@@ -78,6 +78,11 @@ export const textToSpeech = (text: string): Promise<Blob> =>
     .post('/chat/tts', { text, voice: 'nova' }, { responseType: 'blob' })
     .then((r) => r.data);
 
+export const getVoiceToken = (
+  sessionId: string,
+): Promise<{ token: string; url: string; room_name: string; session_id: string }> =>
+  api.post('/chat/voice-token', { session_id: sessionId }).then((r) => r.data);
+
 // --- Restaurant ---
 export const getRestaurantInfo = () =>
   api.get('/restaurant/info').then((r) => r.data);

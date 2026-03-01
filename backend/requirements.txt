@@ -21,10 +21,12 @@ pydantic-settings==2.7.1
 httpx==0.28.1
 
 # LLM
-openai==1.59.3
+openai==2.24.0
 
 # Voice (LiveKit)
 livekit-api==1.1.0
+livekit-agents==1.4.3
+livekit-plugins-openai==1.4.3
 
 # Email (dev: console, prod: resend)
 resend==2.6.0
