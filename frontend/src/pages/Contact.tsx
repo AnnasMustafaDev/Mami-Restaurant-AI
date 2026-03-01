@@ -1,10 +1,50 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, Phone, Mail, Clock, Send } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { getRestaurantInfo } from '../services/api';
 
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
+
+  const { data: info } = useQuery({
+    queryKey: ['restaurant-info'],
+    queryFn: getRestaurantInfo,
+  });
+
+  const contact = info?.contact;
+
+  const contactItems = [
+    {
+      icon: MapPin,
+      title: 'Address',
+      lines: contact?.address_lines ?? ['Oderberger Straße 13', '10435 Berlin'],
+    },
+    {
+      icon: Phone,
+      title: 'Phone',
+      lines: [contact?.phone ?? '+49 30 239 165 67'],
+    },
+    {
+      icon: Mail,
+      title: 'Email',
+      lines: [contact?.email ?? 'hello@mamis-berlin.de'],
+    },
+    {
+      icon: Clock,
+      title: 'Hours',
+      lines: contact?.hours ?? [
+        'Montag: Geschlossen',
+        'Di — Do: 18:00 — 00:00',
+        'Freitag: 18:00 — 01:00',
+        'Samstag: 18:00 — 01:00',
+        'Sonntag: Geschlossen',
+      ],
+    },
+  ];
+
+  const mapAddress = contact?.map_address ?? 'Oderberger Straße 13, 10435 Berlin';
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,41 +95,14 @@ export default function Contact() {
             </div>
 
             <div className="space-y-6">
-              {[
-                {
-                  icon: MapPin,
-                  title: 'Address',
-                  lines: ['Oderberger Straße 13', '10435 Berlin'],
-                },
-                {
-                  icon: Phone,
-                  title: 'Phone',
-                  lines: ['+49 30 239 165 67'],
-                },
-                {
-                  icon: Mail,
-                  title: 'Email',
-                  lines: ['hello@mamis-berlin.de'],
-                },
-                {
-                  icon: Clock,
-                  title: 'Hours',
-                  lines: [
-                    'Montag: Geschlossen',
-                    'Di — Do: 18:00 — 00:00',
-                    'Freitag: 18:00 — 01:00',
-                    'Samstag: 18:00 — 01:00',
-                    'Sonntag: Geschlossen',
-                  ],
-                },
-              ].map((item) => (
+              {contactItems.map((item) => (
                 <div key={item.title} className="flex items-start gap-4">
                   <div className="w-10 h-10 bg-wine/10 rounded-xl flex items-center justify-center shrink-0">
                     <item.icon className="text-wine" size={18} />
                   </div>
                   <div>
                     <h3 className="font-semibold text-wine-dark text-sm">{item.title}</h3>
-                    {item.lines.map((line, j) => (
+                    {item.lines.map((line: string, j: number) => (
                       <p key={j} className="text-warm-gray text-sm">{line}</p>
                     ))}
                   </div>
@@ -189,7 +202,7 @@ export default function Contact() {
               <div className="w-14 h-14 bg-wine/10 rounded-full flex items-center justify-center mx-auto mb-3">
                 <MapPin size={24} className="text-wine" />
               </div>
-              <p className="text-wine-dark font-semibold">Oderberger Straße 13, 10435 Berlin</p>
+              <p className="text-wine-dark font-semibold">{mapAddress}</p>
               <p className="text-warm-gray text-sm mt-1">Interactive map coming soon</p>
             </div>
           </div>

@@ -1,10 +1,13 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAdminAuth } from '../../stores/useAdminAuth';
-import { LogOut, CalendarDays, MessageSquare } from 'lucide-react';
+import { LogOut, CalendarDays, MessageSquare, UtensilsCrossed, Info, Phone } from 'lucide-react';
 
 const adminNav = [
   { to: '/admin/dashboard', label: 'Reservations', icon: CalendarDays },
   { to: '/admin/chats', label: 'Chat Sessions', icon: MessageSquare },
+  { to: '/admin/menu', label: 'Menu', icon: UtensilsCrossed },
+  { to: '/admin/about', label: 'About', icon: Info },
+  { to: '/admin/contact', label: 'Contact', icon: Phone },
 ];
 
 export default function AdminLayout() {

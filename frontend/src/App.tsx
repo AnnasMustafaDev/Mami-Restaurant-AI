@@ -11,6 +11,9 @@ import Contact from './pages/Contact';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminChats from './pages/admin/AdminChats';
+import AdminMenu from './pages/admin/AdminMenu';
+import AdminAbout from './pages/admin/AdminAbout';
+import AdminContact from './pages/admin/AdminContact';
 import AdminLayout from './components/admin/AdminLayout';
 import AdminRoute from './components/admin/AdminRoute';
 
@@ -43,6 +46,9 @@ function App() {
             <Route element={<AdminLayout />}>
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/admin/chats" element={<AdminChats />} />
+              <Route path="/admin/menu" element={<AdminMenu />} />
+              <Route path="/admin/about" element={<AdminAbout />} />
+              <Route path="/admin/contact" element={<AdminContact />} />
             </Route>
           </Route>
         </Routes>
