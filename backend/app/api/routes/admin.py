@@ -172,14 +172,35 @@ async def update_reservation_status(
 @router.get("/chat-sessions", response_model=list[ChatSessionResponse], dependencies=[Depends(get_current_admin)])
 async def list_chat_sessions(
     source: str | None = None,
+    date_from: str | None = None,
+    date_to: str | None = None,
+    min_messages: int | None = None,
     db: AsyncSession = Depends(get_db),
 ):
-    """List all chat sessions, optionally filtered by source."""
+    """List all chat sessions with optional filters: source, date range, min message count."""
     query = select(ChatSession).order_by(ChatSession.started_at.desc())
     if source:
         query = query.where(ChatSession.source == source)
+    if date_from:
+        query = query.where(ChatSession.started_at >= date_from)
+    if date_to:
+        # Add T23:59:59 so the to-date is inclusive
+        query = query.where(ChatSession.started_at <= f"{date_to}T23:59:59")
+    if min_messages is not None:
+        query = query.where(ChatSession.message_count >= min_messages)
     result = await db.execute(query)
     return result.scalars().all()
+
+
+@router.delete("/chat-sessions/{session_id}", dependencies=[Depends(get_current_admin)])
+async def delete_chat_session(session_id: str, db: AsyncSession = Depends(get_db)):
+    """Delete a chat session and all its messages (cascade)."""
+    session = await db.get(ChatSession, session_id)
+    if not session:
+        raise HTTPException(status_code=404, detail="Chat session not found")
+    await db.delete(session)
+    await db.commit()
+    return {"detail": "Chat session deleted"}
 
 
 @router.get("/chat-sessions/{session_id}/messages", response_model=list[ChatMessageResponse], dependencies=[Depends(get_current_admin)])
@@ -218,12 +239,25 @@ async def get_reservation_chat_sessions(
 # --- Restaurant Config Management (protected) ---
 
 
+_CONFIG_DEFAULTS: dict[str, object] = {
+    "contact": {
+        "address_lines": [""],
+        "phone": "",
+        "email": "",
+        "hours": [""],
+        "map_address": "",
+    },
+    "about": {},
+    "booking_settings": {},
+}
+
+
 @router.get("/config/{key}", dependencies=[Depends(get_current_admin)])
 async def get_config(key: str, db: AsyncSession = Depends(get_db)):
-    """Get a specific restaurant config value."""
+    """Get a specific restaurant config value. Returns an empty default when key not yet set."""
     config = await db.get(RestaurantConfig, key)
     if not config:
-        raise HTTPException(status_code=404, detail=f"Config key '{key}' not found")
+        return {"key": key, "value": _CONFIG_DEFAULTS.get(key, {})}
     try:
         return {"key": config.key, "value": json.loads(config.value)}
     except json.JSONDecodeError:

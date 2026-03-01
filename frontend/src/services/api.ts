@@ -97,11 +97,18 @@ export const adminGetReservations = (params?: { status?: string; date?: string }
 export const adminUpdateReservationStatus = (id: number, status: string) =>
   api.patch(`/admin/reservations/${id}`, null, { params: { status } }).then((r) => r.data);
 
-export const adminGetChatSessions = (params?: { source?: string }) =>
-  api.get('/admin/chat-sessions', { params }).then((r) => r.data);
+export const adminGetChatSessions = (params?: {
+  source?: string;
+  date_from?: string;
+  date_to?: string;
+  min_messages?: number;
+}) => api.get('/admin/chat-sessions', { params }).then((r) => r.data);
 
 export const adminGetChatMessages = (sessionId: string) =>
   api.get(`/admin/chat-sessions/${sessionId}/messages`).then((r) => r.data);
+
+export const adminDeleteChatSession = (sessionId: string) =>
+  api.delete(`/admin/chat-sessions/${sessionId}`).then((r) => r.data);
 
 export const adminGetReservationChatSessions = (reservationId: number) =>
   api.get(`/admin/reservations/${reservationId}/chat-sessions`).then((r) => r.data);
