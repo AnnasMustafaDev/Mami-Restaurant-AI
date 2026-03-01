@@ -1,7 +1,9 @@
+import logging
 import uuid
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
+from livekit import api as lk_api
 from openai import AsyncOpenAI
 from pydantic import BaseModel
 from sqlalchemy import select
@@ -20,6 +22,8 @@ from app.schemas.chat import (
 from app.services.llm_service import chat_with_sofia
 from app.services.voice_service import create_voice_token
 
+logger = logging.getLogger(__name__)
+
 tts_client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
 
 router = APIRouter(prefix="/chat", tags=["chat"])
@@ -31,14 +35,18 @@ async def create_session(
     db: AsyncSession = Depends(get_db),
 ):
     """Create a new chat session."""
-    session = ChatSession(
-        id=str(uuid.uuid4()),
-        source=data.source,
-    )
-    db.add(session)
-    await db.commit()
-    await db.refresh(session)
-    return session
+    try:
+        session = ChatSession(
+            id=str(uuid.uuid4()),
+            source=data.source,
+        )
+        db.add(session)
+        await db.commit()
+        await db.refresh(session)
+        return session
+    except Exception:
+        logger.exception("Failed to create chat session")
+        raise
 
 
 @router.post("/sessions/{session_id}/messages", response_model=ChatMessageResponse)
@@ -127,6 +135,22 @@ async def get_voice_token(
             raise HTTPException(status_code=404, detail="Session not found")
 
     token, room_name = create_voice_token(session_id)
+
+    # Explicitly dispatch the Sofia agent to this room (required in livekit-agents v1.x)
+    try:
+        async with lk_api.LiveKitAPI(
+            url=settings.LIVEKIT_URL,
+            api_key=settings.LIVEKIT_API_KEY,
+            api_secret=settings.LIVEKIT_API_SECRET,
+        ) as lk:
+            await lk.agent_dispatch.create_dispatch(
+                lk_api.CreateAgentDispatchRequest(
+                    agent_name="sofia",
+                    room=room_name,
+                )
+            )
+    except Exception:
+        logger.warning("Agent dispatch failed (worker may not be running)", exc_info=True)
 
     return {
         "token": token,

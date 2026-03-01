@@ -296,8 +296,9 @@ export default function ChatWidget() {
 
 /* ── CHAT BUBBLE ── */
 function ChatBubble({ message }: { message: ChatMessage }) {
-  const isUser = message.role === 'user';
-  const isRec  = !isUser && isWineOrFoodRec(message.content);
+  const isUser  = message.role === 'user';
+  const isVoice = message.source === 'voice';
+  const isRec   = !isUser && isWineOrFoodRec(message.content);
 
   return (
     <div className={`flex items-end gap-2 ${isUser ? 'flex-row-reverse' : ''}`}>
@@ -306,16 +307,26 @@ function ChatBubble({ message }: { message: ChatMessage }) {
           <SofiaAvatar expression={isRec ? 'recommending' : 'idle'} size={28} />
         </div>
       )}
-      <div
-        className={`max-w-[78%] px-3.5 py-2.5 text-sm leading-relaxed shadow-sm ${
-          isUser
-            ? 'bg-wine text-white rounded-2xl rounded-tr-sm msg-slide-right'
-            : isRec
-            ? 'bg-gradient-to-br from-wine/10 to-wine/5 text-gray-800 rounded-2xl rounded-tl-sm italic border border-wine/10 msg-slide-left'
-            : 'bg-white text-gray-800 rounded-2xl rounded-tl-sm msg-slide-left'
-        }`}
-      >
-        {message.content}
+      <div className="relative max-w-[78%]">
+        <div
+          className={`px-3.5 py-2.5 text-sm leading-relaxed shadow-sm ${
+            isUser
+              ? 'bg-wine text-white rounded-2xl rounded-tr-sm msg-slide-right'
+              : isRec
+              ? 'bg-gradient-to-br from-wine/10 to-wine/5 text-gray-800 rounded-2xl rounded-tl-sm italic border border-wine/10 msg-slide-left'
+              : 'bg-white text-gray-800 rounded-2xl rounded-tl-sm msg-slide-left'
+          }`}
+        >
+          {message.content}
+        </div>
+        {isVoice && (
+          <span
+            title="Via voice"
+            className={`absolute -bottom-1 ${isUser ? '-left-1' : '-right-1'} w-4 h-4 rounded-full flex items-center justify-center bg-white border border-wine/20 shadow-sm`}
+          >
+            <Mic size={9} className="text-wine/60" />
+          </span>
+        )}
       </div>
     </div>
   );

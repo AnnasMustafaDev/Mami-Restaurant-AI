@@ -1,11 +1,13 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Mic, MicOff, PhoneOff, Loader2, AlertCircle } from 'lucide-react';
 import {
   LiveKitRoom,
   RoomAudioRenderer,
   useVoiceAssistant,
   useLocalParticipant,
+  useRoomContext,
 } from '@livekit/components-react';
+import { RoomEvent, type TranscriptionSegment, type Participant } from 'livekit-client';
 import { getVoiceToken } from '../../services/api';
 import type { ChatMessage } from '../../hooks/useChat';
 
@@ -31,15 +33,49 @@ const LK_TO_SOFIA: Record<string, string> = {
 };
 
 // ── Inner component (must live inside <LiveKitRoom>) ─────────────────────────
-function VoiceOrbInner({ onStateChange }: { onStateChange?: (state: string) => void }) {
+function VoiceOrbInner({
+  onStateChange,
+  addMessage,
+}: {
+  onStateChange?: (state: string) => void;
+  addMessage: (msg: ChatMessage) => void;
+}) {
   const { state } = useVoiceAssistant();
   const { localParticipant } = useLocalParticipant();
+  const room = useRoomContext();
   const [isMuted, setIsMuted] = useState(false);
+  const seenIds = useRef(new Set<string>());
 
   // Propagate agent state → Sofia avatar expression
   useEffect(() => {
     onStateChange?.(LK_TO_SOFIA[state] ?? 'idle');
   }, [state, onStateChange]);
+
+  // Unified transcription listener — handles both user speech and Sofia's replies.
+  // If the publishing participant is the local user → user bubble.
+  // Any other participant (the agent) → assistant bubble.
+  useEffect(() => {
+    const handleTranscription = (
+      segments: TranscriptionSegment[],
+      participant: Participant | undefined,
+    ) => {
+      const isUser = participant?.identity === localParticipant.identity;
+      for (const seg of segments) {
+        if (seg.final && seg.text.trim() && !seenIds.current.has(seg.id)) {
+          seenIds.current.add(seg.id);
+          addMessage({
+            id: isUser ? `voice-user-${seg.id}` : `voice-ai-${seg.id}`,
+            role: isUser ? 'user' : 'assistant',
+            content: seg.text,
+            source: 'voice',
+          });
+        }
+      }
+    };
+
+    room.on(RoomEvent.TranscriptionReceived, handleTranscription);
+    return () => { room.off(RoomEvent.TranscriptionReceived, handleTranscription); };
+  }, [room, localParticipant.identity, addMessage]);
 
   const handleMuteToggle = async () => {
     const next = !isMuted;
@@ -143,7 +179,7 @@ function VoiceOrbInner({ onStateChange }: { onStateChange?: (state: string) => v
 // ── Outer component — manages token fetch + LiveKitRoom lifecycle ─────────────
 export default function VoiceOrb({
   ensureSession,
-  addMessage: _addMessage,
+  addMessage,
   onStateChange,
 }: VoiceOrbProps) {
   const [connection, setConnection] = useState<ConnectionDetails | null>(null);
@@ -214,7 +250,7 @@ export default function VoiceOrb({
         onDisconnected={handleDisconnect}
         style={{ display: 'contents' }}
       >
-        <VoiceOrbInner onStateChange={onStateChange} />
+        <VoiceOrbInner onStateChange={onStateChange} addMessage={addMessage} />
       </LiveKitRoom>
 
       <button

@@ -26,6 +26,7 @@ if __name__ == "__main__":
     cli.run_app(
         WorkerOptions(
             entrypoint_fnc=entrypoint,
+            agent_name="sofia",
             api_key=settings.LIVEKIT_API_KEY,
             api_secret=settings.LIVEKIT_API_SECRET,
             ws_url=settings.LIVEKIT_URL,

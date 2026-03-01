@@ -4,13 +4,17 @@ Runs as a separate worker process via voice_worker.py.
 """
 
 import json
+import logging
+import time
 import uuid
 from pathlib import Path
 from typing import Annotated
 
 from livekit.agents import Agent, AgentSession, JobContext, function_tool
-from livekit.plugins import openai as lk_openai
+from livekit.plugins import openai as lk_openai, silero
 from sqlalchemy import select
+
+logger = logging.getLogger(__name__)
 
 from app.core.config import settings
 from app.core.database import async_session
@@ -30,6 +34,9 @@ VOICE_ADDENDUM = """
 You are responding via voice — keep every reply under 3 sentences.
 Do NOT use markdown, bullet points, asterisks, or lists in your responses.
 Speak naturally as if talking to a guest face-to-face.
+IMPORTANT: Always detect the language the guest is speaking and reply in EXACTLY that language.
+If the guest speaks German, respond in German. If French, respond in French. If Italian, respond in Italian.
+Never switch languages unless the guest does first.
 </voice_mode>
 """
 
@@ -269,7 +276,41 @@ async def entrypoint(ctx: JobContext) -> None:
         stt=lk_openai.STT(model="whisper-1"),
         llm=lk_openai.LLM(model=settings.OPENAI_MODEL),
         tts=lk_openai.TTS(voice="nova"),
+        vad=silero.VAD.load(),
     )
 
+    # ── Latency timing ────────────────────────────────────────────────────────
+    # Tracks wall-clock time between speech end and first agent audio.
+    # user_input_transcribed fires when STT finalises the transcript.
+    # conversation_item_added fires when the agent's reply is added (TTS started).
+    _t: dict[str, float] = {}
+
+    @session.on("user_input_transcribed")
+    def on_transcribed(ev):
+        _t["transcribed_at"] = time.perf_counter()
+        logger.info(
+            "[TIMING] STT transcript ready: %r  (is_final=%s)",
+            getattr(ev, "transcript", ""),
+            getattr(ev, "is_final", "?"),
+        )
+
+    @session.on("conversation_item_added")
+    def on_item_added(ev):
+        item = getattr(ev, "item", None)
+        role = getattr(item, "role", None) if item else None
+        if role == "assistant" and "transcribed_at" in _t:
+            rtt = time.perf_counter() - _t["transcribed_at"]
+            logger.info("[TIMING] STT→LLM→TTS reply ready: %.2fs total RTT", rtt)
+            _t.clear()
+
+    @session.on("user_state_changed")
+    def on_user_state(ev):
+        state = getattr(ev, "new_state", "?")
+        logger.info("[TIMING] User state → %s", state)
+        if state == "speaking":
+            _t["speech_start"] = time.perf_counter()
+        elif state in ("listening", "idle") and "speech_start" in _t:
+            dur = time.perf_counter() - _t["speech_start"]
+            logger.info("[TIMING] User spoke for %.2fs", dur)
+
     await session.start(room=ctx.room, agent=SofiaVoiceAgent())
-    await ctx.wait_for_disconnect()

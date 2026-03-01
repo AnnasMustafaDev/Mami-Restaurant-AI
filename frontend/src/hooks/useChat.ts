@@ -5,6 +5,7 @@ export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
   content: string;
+  source?: 'voice' | 'text';
 }
 
 export function useChat() {
