@@ -12,6 +12,7 @@ from app.models.chat_message import ChatMessage
 from app.models.chat_session import ChatSession
 from app.models.menu_item import MenuItem
 from app.models.reservation import Reservation
+from app.models.restaurant_config import RestaurantConfig
 from app.schemas.auth import LoginRequest, TokenResponse
 from app.schemas.chat import ChatMessageResponse, ChatSessionResponse
 from app.schemas.menu import MenuItemCreate, MenuItemResponse, MenuItemUpdate
@@ -212,3 +213,42 @@ async def get_reservation_chat_sessions(
     )
     result = await db.execute(query)
     return result.scalars().all()
+
+
+# --- Restaurant Config Management (protected) ---
+
+
+@router.get("/config/{key}", dependencies=[Depends(get_current_admin)])
+async def get_config(key: str, db: AsyncSession = Depends(get_db)):
+    """Get a specific restaurant config value."""
+    config = await db.get(RestaurantConfig, key)
+    if not config:
+        raise HTTPException(status_code=404, detail=f"Config key '{key}' not found")
+    try:
+        return {"key": config.key, "value": json.loads(config.value)}
+    except json.JSONDecodeError:
+        return {"key": config.key, "value": config.value}
+
+
+@router.put("/config/{key}", dependencies=[Depends(get_current_admin)])
+async def update_config(key: str, data: dict, db: AsyncSession = Depends(get_db)):
+    """Update (upsert) a restaurant config value."""
+    value = data.get("value")
+    if value is None:
+        raise HTTPException(status_code=400, detail="Missing 'value' field")
+
+    serialized = json.dumps(value) if not isinstance(value, str) else value
+
+    config = await db.get(RestaurantConfig, key)
+    if config:
+        config.value = serialized
+    else:
+        config = RestaurantConfig(key=key, value=serialized)
+        db.add(config)
+
+    await db.commit()
+    await db.refresh(config)
+    try:
+        return {"key": config.key, "value": json.loads(config.value)}
+    except json.JSONDecodeError:
+        return {"key": config.key, "value": config.value}

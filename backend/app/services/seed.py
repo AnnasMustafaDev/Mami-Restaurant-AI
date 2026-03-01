@@ -307,9 +307,52 @@ async def seed_database(db: AsyncSession):
         RestaurantConfig(
             key="about",
             value=json.dumps({
-                "tagline": "Where every meal is a conversation",
-                "story": "MaMi's Food & Wine is a Berlin restaurant where warm hospitality meets exceptional cuisine. Every dish tells a story of tradition, passion, and the finest seasonal ingredients.",
-                "chef": "MaMi's Kitchen Team",
+                "hero_subtitle": "Seit 2019 — Berlin Prenzlauer Berg",
+                "hero_title": "Our Story",
+                "hero_description": "A family-run bistro where warm hospitality meets exceptional cuisine",
+                "story_label": "Das Herz von MaMi's",
+                "story_title": "Willkommen bei Marcel & Miriam",
+                "story_paragraphs": [
+                    "MaMi's Food & Wine ist ein Restaurant in Berlin Prenzlauer Berg, das warme Gastlichkeit mit außergewöhnlicher Küche verbindet. Gegründet von Marcel und Miriam, erzählt jedes Gericht eine Geschichte von Tradition, Leidenschaft und den feinsten saisonalen Zutaten.",
+                    "Mitten im Prenzlauer Berg, an der Oderberger Straße 13, heißen wir euch seit 2019 willkommen. Unsere Küche verbindet saisonale Rezepte mit mediterranem Flair — ehrlich, kreativ und immer mit Herz zubereitet.",
+                    "Unser Weinprogramm feiert Europas vielfältige Weinlandschaften — von deutschen Rieslingen bis zu toskanischen Klassikern. Jede Flasche ist handverlesen und perfekt auf unsere Gerichte abgestimmt.",
+                ],
+                "story_image_url": "https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=800&q=80",
+                "values": [
+                    {"icon": "Heart", "title": "Passion", "desc": "Every dish is made with love and generations of Italian culinary wisdom."},
+                    {"icon": "Leaf", "title": "Seasonal", "desc": "We source the freshest local ingredients, changing our menu with the seasons."},
+                    {"icon": "Users", "title": "Family", "desc": "Our bistro is an extension of our family table — everyone is welcome."},
+                    {"icon": "Award", "title": "Excellence", "desc": "We hold ourselves to the highest standards in every plate we serve."},
+                ],
+                "milestones": [
+                    {"year": "2018", "title": "Die Idee", "desc": "Marcel und Miriam träumen von einem Ort, wo gutes Essen und guter Wein die Menschen zusammenbringen."},
+                    {"year": "2019", "title": "Die Eröffnung", "desc": "MaMi's Food & Wine öffnet seine Türen in der Oderberger Straße 13, Prenzlauer Berg, Berlin."},
+                    {"year": "2021", "title": "Das Weinprogramm", "desc": "Wir starten unser kuratiertes Naturweinprogramm mit handverlesenen Weinen aus Deutschland und Europa."},
+                    {"year": "2024", "title": "Sofia tritt dem Team bei", "desc": "Unsere KI-Gastgeberin Sofia begleitet euch durch Menü und Reservierungen — auf Deutsch und Englisch."},
+                ],
+                "chef": {
+                    "label": "Unsere Gastgeber",
+                    "name": "Marcel & Miriam",
+                    "paragraph1": "MaMi's steht für Marcel und Miriam — zwei Menschen mit einer tiefen Leidenschaft für gutes Essen, natürliche Weine und echte Gastfreundschaft.",
+                    "paragraph2": "Ihre Philosophie ist einfach: qualitativ hochwertige, saisonale Zutaten, mit Liebe zubereitet und in entspannter Atmosphäre serviert. Jeder Abend bei MaMi's soll sich anfühlen wie ein Abend bei Freunden.",
+                    "image_url": "https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=800&q=80",
+                },
+            }),
+        ),
+        RestaurantConfig(
+            key="contact",
+            value=json.dumps({
+                "address_lines": ["Oderberger Straße 13", "10435 Berlin"],
+                "phone": "+49 30 239 165 67",
+                "email": "hello@mamis-berlin.de",
+                "hours": [
+                    "Montag: Geschlossen",
+                    "Di — Do: 18:00 — 00:00",
+                    "Freitag: 18:00 — 01:00",
+                    "Samstag: 18:00 — 01:00",
+                    "Sonntag: Geschlossen",
+                ],
+                "map_address": "Oderberger Straße 13, 10435 Berlin",
             }),
         ),
         RestaurantConfig(

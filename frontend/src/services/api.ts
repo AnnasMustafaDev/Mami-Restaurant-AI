@@ -101,4 +101,32 @@ export const adminGetChatMessages = (sessionId: string) =>
 export const adminGetReservationChatSessions = (reservationId: number) =>
   api.get(`/admin/reservations/${reservationId}/chat-sessions`).then((r) => r.data);
 
+// --- Admin: Menu CRUD ---
+export const adminGetAllMenuItems = () =>
+  api.get('/menu', { params: { available_only: false } }).then((r) => r.data);
+
+export const adminCreateMenuItem = (data: {
+  name: string;
+  description?: string;
+  category?: string;
+  price: number;
+  dietary_tags?: string[];
+  image_url?: string;
+  is_available?: boolean;
+  is_special?: boolean;
+}) => api.post('/admin/menu', data).then((r) => r.data);
+
+export const adminUpdateMenuItem = (id: number, data: Record<string, unknown>) =>
+  api.put(`/admin/menu/${id}`, data).then((r) => r.data);
+
+export const adminDeleteMenuItem = (id: number) =>
+  api.delete(`/admin/menu/${id}`).then((r) => r.data);
+
+// --- Admin: Restaurant Config ---
+export const adminGetConfig = (key: string) =>
+  api.get(`/admin/config/${key}`).then((r) => r.data);
+
+export const adminUpdateConfig = (key: string, value: unknown) =>
+  api.put(`/admin/config/${key}`, { value }).then((r) => r.data);
+
 export default api;
