@@ -92,7 +92,7 @@ export default function About() {
               <h2 className="text-3xl sm:text-4xl font-bold text-wine-dark mb-6">
                 {storyTitle}
               </h2>
-              {storyParagraphs.map((p, i) => (
+              {storyParagraphs.map((p: string, i: number) => (
                 <p
                   key={i}
                   className={`text-warm-gray leading-relaxed ${i < storyParagraphs.length - 1 ? 'mb-6' : ''} ${

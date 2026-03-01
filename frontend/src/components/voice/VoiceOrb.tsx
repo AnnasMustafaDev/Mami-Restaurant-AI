@@ -9,6 +9,7 @@ type VoiceLang = 'en-US' | 'de-DE';
 interface VoiceOrbProps {
   ensureSession: (source?: string) => Promise<string>;
   addMessage: (msg: ChatMessage) => void;
+  onStateChange?: (state: VoiceState) => void;
 }
 
 // Browser Speech Recognition types
@@ -16,8 +17,13 @@ interface SpeechRecognitionEvent {
   results: { [index: number]: { [index: number]: { transcript: string } } };
 }
 
-export default function VoiceOrb({ ensureSession, addMessage }: VoiceOrbProps) {
+export default function VoiceOrb({ ensureSession, addMessage, onStateChange }: VoiceOrbProps) {
   const [state, setState] = useState<VoiceState>('idle');
+
+  const setStateWithCallback = useCallback((s: VoiceState) => {
+    setState(s);
+    onStateChange?.(s);
+  }, [onStateChange]);
   const [_transcript, setTranscript] = useState('');
   const [_response, setResponse] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -64,10 +70,10 @@ export default function VoiceOrb({ ensureSession, addMessage }: VoiceOrbProps) {
       abortRef.current.abort();
       abortRef.current = null;
     }
-    setState('idle');
+    setStateWithCallback('idle');
     setTranscript('');
     setResponse('');
-  }, []);
+  }, [setStateWithCallback]);
 
   const startListening = useCallback(async () => {
     setError(null);
@@ -97,14 +103,14 @@ export default function VoiceOrb({ ensureSession, addMessage }: VoiceOrbProps) {
 
     recognition.onstart = () => {
       if (!mountedRef.current) return;
-      setState('listening');
+      setStateWithCallback('listening');
     };
 
     recognition.onresult = async (event: SpeechRecognitionEvent) => {
       const text = event.results[0][0].transcript;
       if (!mountedRef.current) return;
       setTranscript(text);
-      setState('thinking');
+      setStateWithCallback('thinking');
 
       // Add user message to shared chat
       addMessage({ id: `user-voice-${Date.now()}`, role: 'user', content: text });
@@ -117,7 +123,7 @@ export default function VoiceOrb({ ensureSession, addMessage }: VoiceOrbProps) {
         if (!mountedRef.current || controller.signal.aborted) return;
 
         setResponse(llmResponse.content);
-        setState('speaking');
+        setStateWithCallback('speaking');
 
         // Add assistant message to shared chat
         addMessage({ id: `assistant-voice-${llmResponse.id}`, role: 'assistant', content: llmResponse.content });
@@ -133,7 +139,7 @@ export default function VoiceOrb({ ensureSession, addMessage }: VoiceOrbProps) {
         audio.onended = () => {
           URL.revokeObjectURL(audioUrl);
           audioRef.current = null;
-          if (mountedRef.current) setState('idle');
+          if (mountedRef.current) setStateWithCallback('idle');
         };
 
         audio.onerror = () => {
@@ -141,7 +147,7 @@ export default function VoiceOrb({ ensureSession, addMessage }: VoiceOrbProps) {
           audioRef.current = null;
           if (mountedRef.current) {
             setError('Failed to play audio');
-            setState('idle');
+            setStateWithCallback('idle');
           }
         };
 
@@ -156,7 +162,7 @@ export default function VoiceOrb({ ensureSession, addMessage }: VoiceOrbProps) {
           const msg = err?.response?.data?.detail || err?.message || 'Unknown error';
           console.error('VoiceOrb error:', err);
           setError(`Voice error: ${msg}`);
-          setState('idle');
+          setStateWithCallback('idle');
         }
       }
     };
@@ -170,7 +176,7 @@ export default function VoiceOrb({ ensureSession, addMessage }: VoiceOrbProps) {
       } else {
         setError(`Speech error: ${event.error}`);
       }
-      setState('idle');
+      setStateWithCallback('idle');
     };
 
     recognition.onend = () => {
@@ -180,7 +186,7 @@ export default function VoiceOrb({ ensureSession, addMessage }: VoiceOrbProps) {
     };
 
     recognition.start();
-  }, [lang, ensureSession, addMessage]);
+  }, [lang, ensureSession, addMessage, setStateWithCallback]);
 
   const handleToggle = () => {
     if (state === 'idle') {

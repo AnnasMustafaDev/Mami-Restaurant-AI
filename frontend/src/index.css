@@ -144,3 +144,137 @@ h1, h2, h3, h4, h5, h6 {
   background: rgba(114, 47, 55, 0.2);
   color: var(--color-wine-dark);
 }
+
+/* ============================
+   SOFIA AVATAR — EXPRESSION STATES
+   ============================ */
+
+/* Hide state-specific elements by default */
+.sofia-avatar .eyebrow-r-raised,
+.sofia-avatar .wink-r,
+.sofia-avatar .mouth-open,
+.sofia-avatar .mouth-smirk,
+.sofia-avatar .wine-glass-icon,
+.sofia-avatar .thinking-dots {
+  display: none;
+}
+
+/* Transform helper — all animatable SVG elements */
+.sofia-avatar .eye-l,
+.sofia-avatar .eye-r,
+.sofia-avatar .eyebrow-l,
+.sofia-avatar .eyebrow-r,
+.sofia-avatar .iris-l,
+.sofia-avatar .iris-r,
+.sofia-avatar .pupil-l,
+.sofia-avatar .pupil-r {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 0.28s ease;
+}
+
+/* === IDLE — subtle breathing on whole SVG === */
+@keyframes sofiaBreath {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.009); }
+}
+.sofia-expr-idle {
+  transform-origin: center center;
+  animation: sofiaBreath 4.5s ease-in-out infinite;
+}
+
+/* === LISTENING — wide eyes, raised brows === */
+.sofia-expr-listening .eye-l,
+.sofia-expr-listening .eye-r {
+  transform: scaleY(1.22);
+}
+.sofia-expr-listening .eyebrow-l,
+.sofia-expr-listening .eyebrow-r {
+  transform: translateY(-2.5px);
+}
+
+/* === THINKING — pupils up-left, left brow furrow === */
+.sofia-expr-thinking .iris-l,
+.sofia-expr-thinking .iris-r,
+.sofia-expr-thinking .pupil-l,
+.sofia-expr-thinking .pupil-r {
+  transform: translate(-2px, -2px);
+}
+.sofia-expr-thinking .eyebrow-l {
+  transform: translateY(-1px) rotate(-7deg);
+}
+.sofia-expr-thinking .thinking-dots {
+  display: block;
+}
+
+/* Thinking dots cascade */
+@keyframes thinkPop {
+  0%, 100% { opacity: 0.2; transform: scale(0.65); }
+  50%       { opacity: 1;   transform: scale(1.15); }
+}
+.sofia-avatar .think-d1,
+.sofia-avatar .think-d2,
+.sofia-avatar .think-d3 {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.sofia-avatar .think-d1 { animation: thinkPop 1.2s ease-in-out 0s      infinite; }
+.sofia-avatar .think-d2 { animation: thinkPop 1.2s ease-in-out 0.35s   infinite; }
+.sofia-avatar .think-d3 { animation: thinkPop 1.2s ease-in-out 0.7s    infinite; }
+
+/* === SPEAKING — open mouth, animated === */
+.sofia-expr-speaking .mouth-closed { display: none; }
+.sofia-expr-speaking .mouth-open   { display: block; }
+
+@keyframes mouthSpeak {
+  0%, 100% { transform: scaleY(0.35); opacity: 0.6; }
+  50%       { transform: scaleY(1);    opacity: 1;   }
+}
+.sofia-expr-speaking .mouth-open {
+  transform-box: fill-box;
+  transform-origin: top center;
+  animation: mouthSpeak 0.44s ease-in-out infinite;
+}
+
+/* === RECOMMENDING — smirk, right wink, raised brow, wine glass === */
+.sofia-expr-recommending .mouth-closed   { display: none;  }
+.sofia-expr-recommending .mouth-smirk    { display: block; }
+.sofia-expr-recommending .eye-r          { display: none;  }
+.sofia-expr-recommending .wink-r         { display: block; }
+.sofia-expr-recommending .eyebrow-r      { display: none;  }
+.sofia-expr-recommending .eyebrow-r-raised { display: block; }
+.sofia-expr-recommending .wine-glass-icon  { display: block; }
+
+@keyframes glassWave {
+  0%, 100% { transform: rotate(0deg)  translateY(0);    }
+  30%       { transform: rotate(9deg)  translateY(-2px); }
+  70%       { transform: rotate(-4deg) translateY(-1px); }
+}
+.sofia-expr-recommending .wine-glass-icon {
+  transform-box: fill-box;
+  transform-origin: bottom center;
+  animation: glassWave 2.2s ease-in-out infinite;
+}
+
+/* ============================
+   WINE-DROP THINKING INDICATOR
+   ============================ */
+.wine-drop-dot {
+  display: inline-block;
+  width: 7px;
+  height: 9px;
+  background: var(--color-wine);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  animation: wineDropBounce 1.2s ease-in-out infinite;
+}
+
+@keyframes wineDropBounce {
+  0%, 100% {
+    transform: rotate(180deg) scaleY(0.55) translateY(-2px);
+    opacity: 0.28;
+  }
+  50% {
+    transform: rotate(180deg) scaleY(1) translateY(0);
+    opacity: 1;
+  }
+}

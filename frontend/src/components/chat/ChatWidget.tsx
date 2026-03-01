@@ -1,29 +1,73 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { MessageCircle, X, Send, Mic } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useChat, type ChatMessage } from '../../hooks/useChat';
 import VoiceOrb from '../voice/VoiceOrb';
+import SofiaAvatar, { type SofiaExpression } from './SofiaAvatar';
 
-const quickReplies = ['See menu', 'Make a reservation', 'Wine pairing', "Today's specials"];
+const quickReplies = [
+  { icon: '🍷', label: 'Wine pairings',    query: 'Wine pairing' },
+  { icon: '📅', label: 'Reserve a table',  query: 'Make a reservation' },
+  { icon: '🍽️', label: "Today's specials", query: "Today's specials" },
+  { icon: '✨', label: 'See the menu',     query: 'See menu' },
+];
+
+function isWineOrFoodRec(content: string): boolean {
+  const keywords = [
+    'wine', 'recommend', 'pairing', 'suggest', 'try', 'bottle',
+    'glass', 'vintage', 'pour', 'selection', 'sommelier', 'tasting',
+  ];
+  const lower = content.toLowerCase();
+  return keywords.some((k) => lower.includes(k));
+}
 
 export default function ChatWidget() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [input, setInput] = useState('');
-  const [voiceMode, setVoiceMode] = useState(false);
-  const { messages, sendMessage, isLoading, ensureSession, addMessage } = useChat();
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [isOpen, setIsOpen]           = useState(false);
+  const [input, setInput]             = useState('');
+  const [voiceMode, setVoiceMode]     = useState(false);
+  const [sofiaExpr, setSofiaExpr]     = useState<SofiaExpression>('idle');
 
-  // Auto-scroll to bottom on new messages
+  const { messages, sendMessage, isLoading, ensureSession, addMessage } = useChat();
+
+  const messagesEndRef  = useRef<HTMLDivElement>(null);
+  const inputRef        = useRef<HTMLInputElement>(null);
+  const speakTimerRef   = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const prevMsgCount    = useRef(messages.length);
+
+  // Auto-scroll
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Focus input when chat opens
+  // Focus input on open
   useEffect(() => {
-    if (isOpen && !voiceMode) {
-      setTimeout(() => inputRef.current?.focus(), 100);
-    }
+    if (isOpen && !voiceMode) setTimeout(() => inputRef.current?.focus(), 320);
   }, [isOpen, voiceMode]);
+
+  // Sofia state machine — loading / typing / closed
+  useEffect(() => {
+    if (!isOpen)       { setSofiaExpr('idle');      return; }
+    if (isLoading)     { setSofiaExpr('thinking');  return; }
+    if (input.length > 0) { setSofiaExpr('listening'); return; }
+    // When loading ends with empty input, let the message-arrival effect handle it
+  }, [isOpen, isLoading, input]);
+
+  // React to new assistant messages
+  useEffect(() => {
+    if (messages.length > prevMsgCount.current) {
+      const last = messages[messages.length - 1];
+      if (last?.role === 'assistant' && last.id !== 'welcome') {
+        if (speakTimerRef.current) clearTimeout(speakTimerRef.current);
+        const expr: SofiaExpression = isWineOrFoodRec(last.content) ? 'recommending' : 'speaking';
+        setSofiaExpr(expr);
+        speakTimerRef.current = setTimeout(() => setSofiaExpr('idle'), 3500);
+      }
+      prevMsgCount.current = messages.length;
+    }
+  }, [messages]);
+
+  // Cleanup timer on unmount
+  useEffect(() => () => { if (speakTimerRef.current) clearTimeout(speakTimerRef.current); }, []);
 
   const handleSend = () => {
     const text = input.trim();
@@ -32,166 +76,232 @@ export default function ChatWidget() {
     sendMessage(text);
   };
 
-  const handleQuickReply = (text: string) => {
-    sendMessage(text);
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  };
+  // Sync voice orb state → Sofia expression
+  const handleVoiceStateChange = useCallback((state: string) => {
+    const map: Record<string, SofiaExpression> = {
+      idle: 'idle', listening: 'listening', thinking: 'thinking', speaking: 'speaking',
+    };
+    setSofiaExpr(map[state] ?? 'idle');
+  }, []);
 
   return (
     <>
-      {/* Floating Chat Bubble */}
-      {!isOpen && (
-        <button
-          onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-wine text-white rounded-full shadow-lg hover:bg-wine-dark transition-all hover:scale-105 flex items-center justify-center"
-          aria-label="Open chat"
-        >
-          <MessageCircle size={24} />
-          {/* Notification dot */}
-          <span className="absolute top-0 right-0 w-3.5 h-3.5 bg-gold rounded-full border-2 border-white animate-pulse" />
-        </button>
-      )}
+      {/* ── FLOATING BUBBLE ── */}
+      <AnimatePresence>
+        {!isOpen && (
+          <motion.button
+            key="bubble"
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 520, damping: 26 }}
+            onClick={() => setIsOpen(true)}
+            className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-wine text-white rounded-full shadow-xl hover:bg-wine-dark transition-colors flex items-center justify-center"
+            aria-label="Open chat with Sofia"
+          >
+            <MessageCircle size={24} />
+            <span className="absolute top-0 right-0 w-3.5 h-3.5 bg-gold rounded-full border-2 border-white animate-pulse" />
+          </motion.button>
+        )}
+      </AnimatePresence>
 
-      {/* Chat Panel */}
-      {isOpen && (
-        <div className="fixed bottom-6 right-6 z-50 w-[380px] h-[580px] max-h-[80vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-wine/10">
-          {/* Header */}
-          <div className="bg-wine text-white px-4 py-3 flex items-center justify-between shrink-0">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-sm font-bold">
-                S
+      {/* ── CHAT PANEL ── */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            key="panel"
+            initial={{ opacity: 0, y: 48, scale: 0.94 }}
+            animate={{ opacity: 1, y: 0,  scale: 1    }}
+            exit={{ opacity: 0, y: 24, scale: 0.97 }}
+            transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+            className="fixed bottom-6 right-6 z-50 w-[390px] h-[600px] max-h-[85vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-wine/10 bg-cream"
+          >
+            {/* ── HEADER ── */}
+            <div className="shrink-0 px-4 py-3 bg-wine/95 backdrop-blur-md border-b border-white/10 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                {/* Avatar with expression + online dot */}
+                <div className="relative shrink-0">
+                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/25 shadow-md">
+                    <SofiaAvatar expression={sofiaExpr} size={48} />
+                  </div>
+                  <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-wine/90 animate-pulse" />
+                </div>
+                <div>
+                  <p className="font-semibold text-sm text-white" style={{ fontFamily: "'Playfair Display', serif" }}>
+                    Sofia
+                  </p>
+                  <p className="text-xs text-white/65">Virtual Host · Online</p>
+                </div>
               </div>
-              <div>
-                <p className="font-semibold text-sm">Sofia</p>
-                <p className="text-xs text-white/70">MaMi's Virtual Host</p>
+
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setVoiceMode(!voiceMode)}
+                  className={`p-2 rounded-lg transition-all ${
+                    voiceMode ? 'bg-gold text-wine-dark shadow-sm' : 'hover:bg-white/10 text-white/75'
+                  }`}
+                  title={voiceMode ? 'Switch to text' : 'Switch to voice'}
+                >
+                  <Mic size={17} />
+                </button>
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="p-2 hover:bg-white/10 rounded-lg transition-colors text-white/75"
+                  aria-label="Close chat"
+                >
+                  <X size={17} />
+                </button>
               </div>
             </div>
-            <div className="flex items-center gap-1">
-              <button
-                onClick={() => setVoiceMode(!voiceMode)}
-                className={`p-1.5 rounded-lg transition-colors ${
-                  voiceMode ? 'bg-gold text-wine-dark' : 'hover:bg-white/10 text-white/80'
-                }`}
-                title={voiceMode ? 'Switch to text' : 'Switch to voice'}
-              >
-                <Mic size={18} />
-              </button>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
-              >
-                <X size={18} />
-              </button>
-            </div>
-          </div>
 
-          {/* Voice Mode */}
-          {voiceMode ? (
-            <div className="flex-1 flex flex-col bg-cream overflow-hidden">
-              <div className="flex items-center justify-center py-4 shrink-0">
-                <VoiceOrb ensureSession={ensureSession} addMessage={addMessage} />
+            {/* ── BODY ── */}
+            {voiceMode ? (
+              /* Voice mode layout */
+              <div className="flex-1 flex flex-col bg-cream overflow-hidden">
+                <div className="flex items-center justify-center py-6 shrink-0">
+                  <VoiceOrb
+                    ensureSession={ensureSession}
+                    addMessage={addMessage}
+                    onStateChange={handleVoiceStateChange}
+                  />
+                </div>
+                {messages.length > 1 && (
+                  <div className="flex-1 overflow-y-auto px-4 py-2 space-y-3 border-t border-wine/10">
+                    <AnimatePresence initial={false}>
+                      {messages.map((msg) => (
+                        <motion.div
+                          key={msg.id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0  }}
+                          transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                        >
+                          <ChatBubble message={msg} />
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                    <div ref={messagesEndRef} />
+                  </div>
+                )}
               </div>
-              {messages.length > 1 && (
-                <div className="flex-1 overflow-y-auto px-4 py-2 space-y-3 border-t border-wine/10">
-                  {messages.map((msg) => (
-                    <ChatBubble key={msg.id} message={msg} />
-                  ))}
+            ) : (
+              <>
+                {/* ── MESSAGES ── */}
+                <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 bg-cream">
+                  <AnimatePresence initial={false}>
+                    {messages.map((msg) => (
+                      <motion.div
+                        key={msg.id}
+                        initial={{ opacity: 0, y: 10, scale: 0.97 }}
+                        animate={{ opacity: 1, y: 0,  scale: 1    }}
+                        transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                      >
+                        <ChatBubble message={msg} />
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+
+                  {/* ── THINKING INDICATOR ── */}
+                  <AnimatePresence>
+                    {isLoading && (
+                      <motion.div
+                        key="thinking"
+                        initial={{ opacity: 0, y: 8  }}
+                        animate={{ opacity: 1, y: 0  }}
+                        exit={{ opacity: 0 }}
+                        className="flex items-center gap-2"
+                      >
+                        <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 bg-wine/10">
+                          <SofiaAvatar expression="thinking" size={28} />
+                        </div>
+                        <div className="bg-white rounded-2xl rounded-tl-sm px-3.5 py-2.5 shadow-sm flex items-center gap-1.5">
+                          <span className="wine-drop-dot" style={{ animationDelay: '0ms'   }} />
+                          <span className="wine-drop-dot" style={{ animationDelay: '200ms' }} />
+                          <span className="wine-drop-dot" style={{ animationDelay: '400ms' }} />
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* ── QUICK REPLY CARDS ── */}
+                  {messages.length === 1 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.35 }}
+                      className="grid grid-cols-2 gap-2 pt-1"
+                    >
+                      {quickReplies.map(({ icon, label, query }) => (
+                        <button
+                          key={label}
+                          onClick={() => sendMessage(query)}
+                          className="flex items-center gap-2 bg-white border border-wine/15 rounded-xl px-3 py-2.5 text-left hover:border-wine/40 hover:bg-wine/5 hover:shadow-sm transition-all group"
+                        >
+                          <span className="text-base shrink-0">{icon}</span>
+                          <span className="text-xs text-warm-gray group-hover:text-wine font-medium leading-tight transition-colors">
+                            {label}
+                          </span>
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+
                   <div ref={messagesEndRef} />
                 </div>
-              )}
-            </div>
-          ) : (
-            <>
-              {/* Messages */}
-              <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 bg-cream">
-                {messages.map((msg) => (
-                  <ChatBubble key={msg.id} message={msg} />
-                ))}
 
-                {isLoading && (
-                  <div className="flex items-start gap-2">
-                    <div className="w-7 h-7 bg-wine/10 rounded-full flex items-center justify-center text-xs font-bold text-wine shrink-0">
-                      S
-                    </div>
-                    <div className="bg-white rounded-2xl rounded-tl-sm px-3 py-2 shadow-sm">
-                      <div className="flex gap-1">
-                        <span className="w-2 h-2 bg-warm-gray/40 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                        <span className="w-2 h-2 bg-warm-gray/40 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                        <span className="w-2 h-2 bg-warm-gray/40 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-                      </div>
-                    </div>
+                {/* ── INPUT ── */}
+                <div className="px-3 py-2.5 border-t border-wine/10 bg-white shrink-0">
+                  <div className="flex items-center gap-2">
+                    <input
+                      ref={inputRef}
+                      type="text"
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      placeholder="Ask Sofia anything..."
+                      disabled={isLoading}
+                      className="flex-1 px-3 py-2 text-sm bg-cream rounded-lg outline-none placeholder:text-warm-gray/50 border border-transparent focus:border-wine/25 transition-colors"
+                    />
+                    <button
+                      onClick={handleSend}
+                      disabled={!input.trim() || isLoading}
+                      className="p-2 bg-wine text-white rounded-lg hover:bg-wine-dark transition-colors disabled:opacity-40"
+                    >
+                      <Send size={16} />
+                    </button>
                   </div>
-                )}
-
-                {/* Quick replies — show only when there's just the welcome message */}
-                {messages.length === 1 && (
-                  <div className="flex flex-wrap gap-2 pt-1">
-                    {quickReplies.map((text) => (
-                      <button
-                        key={text}
-                        onClick={() => handleQuickReply(text)}
-                        className="text-xs bg-white border border-wine/20 text-wine px-3 py-1.5 rounded-full hover:bg-wine/5 transition-colors"
-                      >
-                        {text}
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                <div ref={messagesEndRef} />
-              </div>
-
-              {/* Input */}
-              <div className="px-3 py-2 border-t border-gray-100 bg-white shrink-0">
-                <div className="flex items-center gap-2">
-                  <input
-                    ref={inputRef}
-                    type="text"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    placeholder="Ask Sofia anything..."
-                    className="flex-1 px-3 py-2 text-sm bg-cream rounded-lg border-none outline-none placeholder:text-warm-gray/50"
-                    disabled={isLoading}
-                  />
-                  <button
-                    onClick={handleSend}
-                    disabled={!input.trim() || isLoading}
-                    className="p-2 bg-wine text-white rounded-lg hover:bg-wine-dark transition-colors disabled:opacity-40"
-                  >
-                    <Send size={16} />
-                  </button>
                 </div>
-              </div>
-            </>
-          )}
-        </div>
-      )}
+              </>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
 
+/* ── CHAT BUBBLE ── */
 function ChatBubble({ message }: { message: ChatMessage }) {
   const isUser = message.role === 'user';
+  const isRec  = !isUser && isWineOrFoodRec(message.content);
 
   return (
-    <div className={`flex items-start gap-2 ${isUser ? 'flex-row-reverse' : ''}`}>
+    <div className={`flex items-end gap-2 ${isUser ? 'flex-row-reverse' : ''}`}>
       {!isUser && (
-        <div className="w-7 h-7 bg-wine/10 rounded-full flex items-center justify-center text-xs font-bold text-wine shrink-0">
-          S
+        <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 bg-wine/10 mb-0.5">
+          <SofiaAvatar expression={isRec ? 'recommending' : 'idle'} size={28} />
         </div>
       )}
       <div
-        className={`max-w-[75%] px-3 py-2 text-sm leading-relaxed shadow-sm ${
+        className={`max-w-[78%] px-3.5 py-2.5 text-sm leading-relaxed shadow-sm ${
           isUser
-            ? 'bg-wine text-white rounded-2xl rounded-tr-sm'
-            : 'bg-white text-gray-800 rounded-2xl rounded-tl-sm'
+            ? 'bg-wine text-white rounded-2xl rounded-tr-sm msg-slide-right'
+            : isRec
+            ? 'bg-gradient-to-br from-wine/10 to-wine/5 text-gray-800 rounded-2xl rounded-tl-sm italic border border-wine/10 msg-slide-left'
+            : 'bg-white text-gray-800 rounded-2xl rounded-tl-sm msg-slide-left'
         }`}
       >
         {message.content}
