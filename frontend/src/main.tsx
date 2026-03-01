@@ -8,5 +8,3 @@ createRoot(document.getElementById('root')!).render(
     <App />
   </StrictMode>,
 )
-
-# 2026-01-18 11:20 | // MaMi frontend v0.1
